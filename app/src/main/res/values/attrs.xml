@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Material Button-->
+    <declare-styleable name="MaterialButton">
+        <attr name="buttonText" format="string" />
+        <attr name="buttonColor" format="color" />
+        <attr name="setIcon" format="boolean" />
+    </declare-styleable>
+</resources>
