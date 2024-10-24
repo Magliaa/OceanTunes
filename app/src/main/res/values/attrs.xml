@@ -6,4 +6,13 @@
         <attr name="buttonColor" format="color" />
         <attr name="setIcon" format="boolean" />
     </declare-styleable>
+
+    <!--Material Text Field-->
+    <declare-styleable name="MaterialTextInput">
+        <attr name="hintText" format="string" />
+        <attr name="textColor" format="color|reference" />
+        <attr name="hintTextColor" format="color|reference" />
+        <attr name="boxStrokeColor" format="color|reference" />
+        <attr name="boxBackgroundColor" format="color|reference" />
+    </declare-styleable>
 </resources>

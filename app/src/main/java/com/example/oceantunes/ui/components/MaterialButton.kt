@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import com.example.oceantunes.R
 import com.google.android.material.button.MaterialButton
 
-
 class MaterialButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -23,10 +22,12 @@ class MaterialButton @JvmOverloads constructor(
         text = buttonText ?: "DEFAULT TEXT BUTTON"
         textSize = resources.getDimension(R.dimen.button_text_size)
         cornerRadius = resources.getDimensionPixelSize(R.dimen.button_corner_radius)
+        //elevation = resources.getDimension(R.dimen.button_elevation)
         backgroundTintList = buttonColor ?:
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple3))
 
-        if (buttonColor == null) {
+        if (backgroundTintList == buttonColor &&
+            buttonColor != ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple3))) {
             setTextColor(ContextCompat.getColor(context, R.color.dark))
         } else {
             setTextColor(ContextCompat.getColor(context, R.color.white))
@@ -36,7 +37,8 @@ class MaterialButton @JvmOverloads constructor(
             icon = ContextCompat.getDrawable(context, R.drawable.ic_arrow_right)
             iconSize = resources.getDimensionPixelSize(R.dimen.button_icon_size)
 
-            iconTint = if (buttonColor == null) {
+            iconTint = if (backgroundTintList == buttonColor &&
+                buttonColor != ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple3))) {
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple2))
             } else {
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.white))
