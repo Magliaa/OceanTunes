@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <!--<com.example.oceantunes.ui.components.MaterialButton
+    <com.example.oceantunes.ui.components.MaterialButton
         android:layout_width="180dp"
         android:layout_height="56dp"
         android:id="@+id/my_button"
@@ -18,7 +18,6 @@
         app:buttonText = "Scopri di più"
         app:buttonColor = "@color/white"
         app:setIcon="true" />
-    -->
 
     <com.example.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/MaterialTextInput"
