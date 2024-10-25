@@ -28,10 +28,14 @@ class MaterialTextInput @JvmOverloads constructor(
         editText?.setTextColor(textColor ?:
         ColorStateList.valueOf(ContextCompat.getColor(context, R.color.dark)))
 
+
+
         setHintTextColor(hintTextColor)
 
         if (boxStrokeColor != null) setBoxStrokeColorStateList(boxStrokeColor)
         if (boxBackgroundColor != null) setBoxBackgroundColorStateList(boxBackgroundColor)
+
+
 
         attributes.recycle()
     }
