@@ -1,4 +1,4 @@
-package com.example.oceantunes.ui.dashboard
+package com.tunagold.oceantunes.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.oceantunes.databinding.FragmentSearchBinding
+import com.tunagold.oceantunes.databinding.FragmentProfileBinding
 
-class SearchFragment : Fragment() {
 
-    private var _binding: FragmentSearchBinding? = null
+class ProfileFragment : Fragment() {
+
+    private var _binding: FragmentProfileBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,14 +23,14 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val searchViewModel =
-            ViewModelProvider(this).get(SearchViewModel::class.java)
+        val profileViewModel =
+            ViewModelProvider(this)[ProfileViewModel::class.java]
 
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        searchViewModel.text.observe(viewLifecycleOwner) {
+        val textView: TextView = binding.textNotifications
+        profileViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root

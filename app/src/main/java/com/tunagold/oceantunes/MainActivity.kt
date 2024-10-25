@@ -1,16 +1,15 @@
-package com.example.oceantunes
+package com.tunagold.oceantunes
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.oceantunes.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationView
+import com.tunagold.oceantunes.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 

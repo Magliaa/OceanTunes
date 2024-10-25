@@ -1,4 +1,4 @@
-package com.example.oceantunes
+package com.tunagold.oceantunes
 
 import org.junit.Test
 

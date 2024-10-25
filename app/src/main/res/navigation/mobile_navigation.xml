@@ -7,18 +7,18 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.oceantunes.ui.home.HomeFragment"
+        android:name="com.tunagold.oceantunes.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.example.oceantunes.ui.dashboard.SearchFragment"
+        android:name="com.tunagold.oceantunes.ui.search.SearchFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.example.oceantunes.ui.notifications.ProfileFragment"
+        android:name="com.tunagold.oceantunes.ui.profile.ProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_profile" />
 </navigation>

@@ -1,10 +1,10 @@
-package com.example.oceantunes.ui.components
+package com.tunagold.oceantunes.ui.components
 
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
-import com.example.oceantunes.R
+import com.tunagold.oceantunes.R
 import com.google.android.material.textfield.TextInputLayout
 
 class MaterialTextInput @JvmOverloads constructor(

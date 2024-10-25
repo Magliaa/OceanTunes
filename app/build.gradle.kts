@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.oceantunes"
+    namespace = "com.tunagold.oceantunes"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.oceantunes"
+        applicationId = "com.tunagold.oceantunes"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

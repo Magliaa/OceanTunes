@@ -1,4 +1,4 @@
-package com.example.oceantunes.ui.home
+package com.tunagold.oceantunes.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.oceantunes.databinding.FragmentHomeBinding
+import com.tunagold.oceantunes.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
 

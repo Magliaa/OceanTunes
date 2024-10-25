@@ -1,4 +1,4 @@
-package com.example.oceantunes.ui.home
+package com.tunagold.oceantunes.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
