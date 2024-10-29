@@ -15,4 +15,15 @@
         <attr name="boxStrokeColor" format="color|reference" />
         <attr name="boxBackgroundColor" format="color|reference" />
     </declare-styleable>
+
+    <!--Material Carousel-->
+    <declare-styleable name="MaterialCarousel">
+        <attr name="itemSpacing" format="dimension" />
+        <attr name="autoScroll" format="boolean" />
+        <attr name="scrollInterval" format="integer" />
+        <attr name="showIndicators" format="boolean" />
+        <attr name="indicatorColor" format="color" />
+        <attr name="indicatorSelectedColor" format="color" />
+        <!-- Add more attributes as needed -->
+    </declare-styleable>
 </resources>

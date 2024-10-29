@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentProfileBinding
+import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
+import com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
 
 
 class ProfileFragment : Fragment() {
@@ -29,12 +31,30 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textNotifications
-        profileViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+
+
+
         return root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val materialCarousel: MaterialCarousel = view.findViewById(R.id.my_carousel)
+
+        //insert items in the carousel with API
+        val items = listOf(
+            "Sonic 1",
+            "Sonic 2",
+            "Sonic 3",
+            "Sonic 4",
+            "Sonic 5"
+        )
+        val adapter = CarouselAdapter(items)
+        materialCarousel.adapter = adapter
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

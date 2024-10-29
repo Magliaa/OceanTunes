@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <!--<com.tunagold.oceantunes.ui.components.MaterialButton
+    <com.tunagold.oceantunes.ui.components.MaterialButton
         android:layout_width="180dp"
         android:layout_height="56dp"
         android:id="@+id/my_button"
@@ -17,9 +17,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:buttonText = "Scopri di più"
         app:buttonColor = "@color/white"
-        app:setIcon="true" /> -->
+        app:setIcon="true" />
 
-    <!-- <com.tunagold.oceantunes.ui.components.MaterialTextInput
+     <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/MaterialTextInput"
         android:layout_width="250dp"
         android:layout_height="56dp"
@@ -40,6 +40,6 @@
             android:layout_height="wrap_content"
             android:inputType="text" />
 
-    </com.tunagold.oceantunes.ui.components.MaterialTextInput> -->
+    </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
