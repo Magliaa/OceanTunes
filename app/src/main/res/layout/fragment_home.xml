@@ -7,39 +7,55 @@
     tools:context=".ui.home.HomeFragment">
 
     <com.tunagold.oceantunes.ui.components.MaterialButton
+        android:id="@+id/my_button"
         android:layout_width="180dp"
         android:layout_height="56dp"
-        android:id="@+id/my_button"
         android:elevation="2dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:buttonColor="@color/white"
+        app:buttonText="Scopri di più"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:buttonText = "Scopri di più"
-        app:buttonColor = "@color/white"
+        app:layout_constraintHorizontal_bias="0.069"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.254"
         app:setIcon="true" />
 
-     <com.tunagold.oceantunes.ui.components.MaterialTextInput
+    <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/MaterialTextInput"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="250dp"
         android:layout_height="56dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="24dp"
         app:boxBackgroundColor="@color/white"
         app:boxStrokeColor="@color/gray"
+        app:endIconMode="password_toggle"
         app:hintText="Username"
         app:hintTextColor="@color/gray"
-        app:textColor="@color/dark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:endIconMode="password_toggle"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        app:textColor="@color/dark">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
-
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
+
+    <!-- Actual size: 80dp, Every margin is increased by 12px to be aligned correctly -->
+    <com.tunagold.oceantunes.ui.components.MaterialFAB
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:padding="16dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        app:icon="@drawable/fab_logo_temp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.087"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.459" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

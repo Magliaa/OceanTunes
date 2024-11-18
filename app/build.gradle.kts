@@ -48,7 +48,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation(libs.glide)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.runtime.android)
     testImplementation(libs.junit)

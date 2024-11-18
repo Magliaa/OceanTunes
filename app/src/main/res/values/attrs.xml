@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!--Material Button-->
     <declare-styleable name="MaterialButton">
         <attr name="buttonText" format="string" />
@@ -15,15 +15,21 @@
         <attr name="boxStrokeColor" format="color|reference" />
         <attr name="boxBackgroundColor" format="color|reference" />
     </declare-styleable>
-
+    
     <!--Material Carousel-->
     <declare-styleable name="MaterialCarousel">
-        <attr name="itemSpacing" format="dimension" />
+        <attr name="itemSpacing" format="dimension" tools:ignore="PrivateResource" />
         <attr name="autoScroll" format="boolean" />
         <attr name="scrollInterval" format="integer" />
         <attr name="showIndicators" format="boolean" />
         <attr name="indicatorColor" format="color" />
         <attr name="indicatorSelectedColor" format="color" />
-        <!-- Add more attributes as needed -->
+    </declare-styleable>
+
+    <!-- Material FAB -->
+    <declare-styleable name="MaterialFAB">
+        <attr name="backgroundColor" format="color" />
+        <attr name="icon" format="reference" />
+        <attr name="iconTint" format="color" />
     </declare-styleable>
 </resources>

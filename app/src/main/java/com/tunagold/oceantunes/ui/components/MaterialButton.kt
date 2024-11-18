@@ -22,7 +22,6 @@ class MaterialButton @JvmOverloads constructor(
         text = buttonText ?: "DEFAULT TEXT BUTTON"
         textSize = resources.getDimension(R.dimen.button_text_size)
         cornerRadius = resources.getDimensionPixelSize(R.dimen.button_corner_radius)
-        //elevation = resources.getDimension(R.dimen.button_elevation)
         backgroundTintList = buttonColor ?:
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple3))
 
