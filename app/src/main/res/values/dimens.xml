@@ -11,4 +11,7 @@
     <!-- Material FAB -->
     <dimen name="FAB_corner_radius">16dp</dimen>
     <dimen name="FAB_icon_size">64dp</dimen>
+
+    <!-- Divider -->
+    <dimen name="divider_thickness">1dp</dimen>
 </resources>

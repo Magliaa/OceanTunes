@@ -32,4 +32,9 @@
         <attr name="icon" format="reference" />
         <attr name="iconTint" format="color" />
     </declare-styleable>
+
+    <!-- Divider -->
+    <declare-styleable name="Divider">
+        <attr name="color" format="color" />
+    </declare-styleable>
 </resources>
