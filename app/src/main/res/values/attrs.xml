@@ -37,4 +37,11 @@
     <declare-styleable name="Divider">
         <attr name="color" format="color" />
     </declare-styleable>
+
+    <!-- Song Summary -->
+    <declare-styleable name="SongSummary">
+        <attr name="img" format="reference" />
+        <attr name="title" format="string" />
+        <attr name="artist" format="string" />
+    </declare-styleable>
 </resources>

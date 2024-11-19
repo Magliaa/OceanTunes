@@ -11,7 +11,7 @@ class CarouselAdapter(private val items: List<Any>) : RecyclerView.Adapter<Carou
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_layout, parent, false) // Replace with your item layout
+            .inflate(R.layout.item_layout_carousel, parent, false) // Replace with your item layout
         return CarouselViewHolder(itemView)
     }
 

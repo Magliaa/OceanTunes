@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+    <!-- Actual size: 80dp, Every margin is increased by 12px to be aligned correctly -->
+
     <com.tunagold.oceantunes.ui.components.MaterialButton
         android:id="@+id/my_button"
         android:layout_width="180dp"
@@ -15,26 +17,57 @@
         app:buttonText="Scopri di più"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.069"
+        app:layout_constraintHorizontal_bias="0.138"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.254"
+        app:layout_constraintVertical_bias="0.337"
         app:setIcon="true" />
+
+    <com.tunagold.oceantunes.ui.components.MaterialFAB
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:contentDescription="Login with SERVICE_NAME"
+        android:padding="16dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        app:icon="@drawable/fab_logo_temp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.225"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.637"
+        tools:ignore="HardcodedText" />
+
+    <com.tunagold.oceantunes.ui.components.SongSummary
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:title="Song Title"
+        app:artist="Artist"
+        app:img="@drawable/unknown_song_img"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.816"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.714" />
 
     <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/MaterialTextInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="250dp"
         android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
         app:boxBackgroundColor="@color/white"
         app:boxStrokeColor="@color/gray"
         app:endIconMode="password_toggle"
         app:hintText="Username"
         app:hintTextColor="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.198"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.151"
         app:textColor="@color/dark">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -43,23 +76,6 @@
             android:inputType="text"
             tools:ignore="TextContrastCheck" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
-
-    <!-- Actual size: 80dp, Every margin is increased by 12px to be aligned correctly -->
-    <com.tunagold.oceantunes.ui.components.MaterialFAB
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:padding="16dp"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        android:contentDescription= "Login with SERVICE_NAME"
-        tools:ignore="HardcodedText"
-        app:icon="@drawable/fab_logo_temp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.087"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.459" />
 
     <com.tunagold.oceantunes.ui.components.MaterialDivider
         android:layout_width="320dp"

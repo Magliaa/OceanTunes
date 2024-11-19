@@ -14,4 +14,7 @@
 
     <!-- Divider -->
     <dimen name="divider_thickness">1dp</dimen>
+
+    <!-- Song Summary -->
+    <dimen name="song_summary_corner_radius">28dp</dimen>
 </resources>
