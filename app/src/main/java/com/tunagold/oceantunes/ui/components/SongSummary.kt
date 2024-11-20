@@ -19,17 +19,28 @@ class SongSummary @JvmOverloads constructor (
     private val songArtist: TextView
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.item_layout_song_summary, this, true)
 
-        songImage = findViewById(R.id.songImageID)
-        songTitle = findViewById(R.id.songTitleID)
-        songArtist = findViewById(R.id.songArtistID)
 
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.SongSummary)
 
+        val isLarge = attributes.getBoolean(R.styleable.SongSummary_isLarge, false)
         val img = attributes.getResourceId(R.styleable.SongSummary_img, R.drawable.unknown_song_img)
         val title = attributes.getString(R.styleable.SongSummary_title)
         val artist = attributes.getString(R.styleable.SongSummary_artist)
+
+        if (isLarge) {
+            LayoutInflater.from(context).inflate(R.layout.item_layout_song_summary_large, this, true)
+
+            songImage = findViewById(R.id.songImageID_large)
+            songTitle = findViewById(R.id.songTitleID_large)
+            songArtist = findViewById(R.id.songArtistID_large)
+        } else {
+            LayoutInflater.from(context).inflate(R.layout.item_layout_song_summary, this, true)
+
+            songImage = findViewById(R.id.songImageID)
+            songTitle = findViewById(R.id.songTitleID)
+            songArtist = findViewById(R.id.songArtistID)
+        }
 
         songImage.setImageResource(img)
         songTitle.text = title
