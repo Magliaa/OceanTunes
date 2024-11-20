@@ -17,4 +17,8 @@
 
     <!-- Song Summary -->
     <dimen name="song_summary_corner_radius">28dp</dimen>
+
+    <!-- Top Charts Song -->
+    <dimen name="top_charts_song_corner_radius">18dp</dimen>
+
 </resources>
