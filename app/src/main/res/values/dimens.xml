@@ -21,4 +21,6 @@
     <!-- Top Charts Song -->
     <dimen name="top_charts_song_corner_radius">18dp</dimen>
 
+    <!-- Data Box -->
+    <dimen name="data_box_corner_radius">18dp</dimen>
 </resources>

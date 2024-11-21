@@ -19,8 +19,6 @@ class SongSummary @JvmOverloads constructor (
     private val songArtist: TextView
 
     init {
-
-
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.SongSummary)
 
         val isLarge = attributes.getBoolean(R.styleable.SongSummary_isLarge, false)
@@ -48,5 +46,4 @@ class SongSummary @JvmOverloads constructor (
 
         attributes.recycle()
     }
-
 }
