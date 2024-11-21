@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.slider.Slider
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentProfileBinding
 import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
@@ -52,7 +53,29 @@ class ProfileFragment : Fragment() {
         )
         val adapter = CarouselAdapter(items)
         materialCarousel.adapter = adapter
+
+        val slider = view.findViewById<Slider>(R.id.material_slider)
+
+        slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                // Responds to when slider's touch event is being started
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                // Responds to when slider's touch event is being stopped
+            }
+        })
+
+        slider.addOnChangeListener { slider, value, fromUser ->
+            // Responds to when slider's value is changed
+        }
+
+        slider.setLabelFormatter { value: Float ->
+            String.format("%.0f★", value)
+        }
     }
+
+
 
 
 
