@@ -23,18 +23,15 @@
     <com.tunagold.oceantunes.ui.components.DataBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:is3Segments="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.24"
-        app:title1="Punteggio"
-        app:title2="Ranking"
-        app:title3="Preferiti"
-        app:val1="9.2"
-        app:val2="452"
-        app:val3="3925" />
+        app:title1="Preferiti"
+        app:title2="Valutati"
+        app:val1="123"
+        app:val2="321" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

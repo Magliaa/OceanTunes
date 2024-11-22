@@ -64,7 +64,7 @@ class DataBox @JvmOverloads constructor (
             titleText3.text = title3
 
         } else {
-            //LayoutInflater.from(context).inflate(R.layout.item_layout_data_box, this, true)
+            LayoutInflater.from(context).inflate(R.layout.item_layout_data_box, this, true)
 
             valText1 = findViewById(R.id.val1)
             valText2 = findViewById(R.id.val2)

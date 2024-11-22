@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:rowCount="2"
-        android:columnCount="3"
+        android:columnCount="2"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
@@ -49,19 +49,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/val3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/dark"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
         <!-- Titles -->
         <TextView
             android:id="@+id/title1"
@@ -74,15 +61,6 @@
 
         <TextView
             android:id="@+id/title2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/dark"
-            android:paddingBottom="8dp"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/title3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
