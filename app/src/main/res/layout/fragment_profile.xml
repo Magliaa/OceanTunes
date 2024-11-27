@@ -7,14 +7,15 @@
     tools:context=".ui.profile.ProfileFragment">
 
 
-
+    <!-- aggiungere se implementiamo l'autoscrolling
+            app:autoScroll="true"
+            app:scrollInterval="3000"
+            -->
     <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
         android:id="@+id/my_carousel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:itemSpacing="8dp"
-        app:autoScroll="true"
-        app:scrollInterval="3000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
