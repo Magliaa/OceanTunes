@@ -71,3 +71,111 @@ Gli attributi del sotto-elemento sono personalizzabili, ma il design di oceantun
 `app:textColor: String` - Permette di cambiare il colore del testo del text field. Il valore di default è "#212121".
 
 `app:endIconMode: String` -Permette di trasformare il text field in un campo di tipo password, assegnando il valore "password_toggle" a questo attributo. Una volta in questa forma, l'elemento viene convertito ed animato come fosse un password field.
+
+## DataBox
+
+**Tag name**:  `com.tunagold.oceantunes.ui.components.DataBox`.
+
+**Struttura**: Self-closing - `<com.tunagold.oceantunes.ui.components.DataBox />`.
+
+**stile**: lo stile di default è filled, è possibile renderlo a 3 segmenti al posto che 2.
+
+### Attributi
+
+`app:title1: String` - Permette di inserire il primo titolo per il primo dato.
+
+`app:title2: String` - Permette di inserire il secondo titolo per il secondo dato.
+
+`app:val1: int` - Permette di inserire il primo valore per il primo dato.
+
+`app:val2: int` - Permette di inserire il secondo valore per il secondo dato.
+
+`app:title3: String` - Nel caso in cui sia un 3 segmenti permette di inserire il terzo titolo per il terzo dato.
+
+`app:val3: int` - Nel caso in cui sia un 3 segmenti permette di inserire il terzo valore per il terzo dato.
+
+### MaterialFAB
+
+***Tag name***: `com.tunagold.oceantunes.ui.components.MaterialFAB`.
+
+***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.MaterialFAB>`.
+
+***stile***:
+
+### Attributi
+
+`android:contentDescription: String` - Permette di inserire una descrizione per il bottone.
+
+`app:icon: Drawable` - Permette di inserire un'immagine all'interno del bottone.
+
+### MaterialDivider
+
+***Tag name***: `com.tunagold.oceantunes.ui.components.MaterialDivider`.
+
+***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.MaterialDivider>`.
+
+***stile***:
+
+### Attributi
+
+Il materialDivider non ha attributi specifici, ha solo attributi universali e constraint.
+
+## MaterialCarousel
+
+***Tag name*** `com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel`.
+
+***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel>`.
+
+***stile***:
+
+### Attributi
+
+`app:itemSpacing: int` - Permette di scegliere la distanza tra gli elementi del carosello.
+
+## SongSummmary
+
+***Tag name***: `com.tunagold.oceantunes.ui.components.SongSummary`.
+
+***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.SongSummary>`.
+
+***stile***: 
+
+### Attributi
+
+`app:isLarge: Boolean` - Permette di scegliere la dimensione del riassunto canzone per adattarlo al carosello a una scheda dei dettagli canzone.
+
+`app:artist: String` - Permette di inserire il nome dell'artista della canzone.
+
+`app:image: Drawable` - Permette di inserire l'immagine della copertina della canzone.
+
+`app:title: String` - Permette di inserire il titolo della canzone.
+
+## TopChartsSong
+
+***Tag name***: `com.tunagold.oceantunes.ui.components.TopChartsSong`.
+
+***Struttura***: Self-Closing `<com.tunagold.oceantunes.ui.components.TopChartsSong>`.
+
+***stile***:
+
+### Attributi
+
+`app:artist: String` - Permette di inserire il nome dell'artista.
+
+`app:titleChartsSong: String` - Permette di inserire il titolo della canzone.
+
+`app:img: Drawable` - Permette di inserire l'immagine della canzone.
+
+## Slider
+
+***Struttura***: Self-closing `<com.google.android.material.slider.Slider>`.
+
+***stile***: slider discreto 
+
+### Attributi
+
+`android:stepSize: float` - Permette di decidere di quanto ci si sposta tra un valore e il successivo nello slider.
+
+`android:valueFrom: float` - Permette di decidere il valore minimo dello slider.
+
+`android:valueTo: float` - Permette di decidere il valore massimo dello slider.
