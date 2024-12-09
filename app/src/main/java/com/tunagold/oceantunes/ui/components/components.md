@@ -94,13 +94,11 @@ Gli attributi del sotto-elemento sono personalizzabili, ma il design di oceantun
 
 `app:val3: int` - Nel caso in cui sia un 3 segmenti permette di inserire il terzo valore per il terzo dato.
 
-### MaterialFAB
+## MaterialFAB
 
 ***Tag name***: `com.tunagold.oceantunes.ui.components.MaterialFAB`.
 
 ***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.MaterialFAB>`.
-
-***stile***:
 
 ### Attributi
 
@@ -108,25 +106,27 @@ Gli attributi del sotto-elemento sono personalizzabili, ma il design di oceantun
 
 `app:icon: Drawable` - Permette di inserire un'immagine all'interno del bottone.
 
-### MaterialDivider
+`app:backgroundColor: color` - Permette di cambiare il colore dello sfondo del FAB
+
+`app:icon: reference` - Permette di impostare un icona nel FAB
+
+`app:iconTint: color` - Peremtte di cambiare il colore dell'icona del FAB
+
+## MaterialDivider
 
 ***Tag name***: `com.tunagold.oceantunes.ui.components.MaterialDivider`.
 
 ***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.MaterialDivider>`.
 
-***stile***:
-
 ### Attributi
 
-Il materialDivider non ha attributi specifici, ha solo attributi universali e constraint.
+`app:iconTint: color` - Peremtte di cambiare il colore dell'icona del Divider
 
 ## MaterialCarousel
 
 ***Tag name*** `com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel`.
 
 ***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel>`.
-
-***stile***:
 
 ### Attributi
 
@@ -137,8 +137,6 @@ Il materialDivider non ha attributi specifici, ha solo attributi universali e co
 ***Tag name***: `com.tunagold.oceantunes.ui.components.SongSummary`.
 
 ***Struttura***: Self-closing - `<com.tunagold.oceantunes.ui.components.SongSummary>`.
-
-***stile***: 
 
 ### Attributi
 
@@ -156,15 +154,13 @@ Il materialDivider non ha attributi specifici, ha solo attributi universali e co
 
 ***Struttura***: Self-Closing `<com.tunagold.oceantunes.ui.components.TopChartsSong>`.
 
-***stile***:
-
 ### Attributi
 
-`app:artist: String` - Permette di inserire il nome dell'artista.
+`app:artistchartssong: String` - Permette di inserire il nome dell'artista.
 
-`app:titleChartsSong: String` - Permette di inserire il titolo della canzone.
+`app:titlechartssong: String` - Permette di inserire il titolo della canzone.
 
-`app:img: Drawable` - Permette di inserire l'immagine della canzone.
+`app:imgchartssong: Drawable` - Permette di inserire l'immagine della canzone.
 
 ## Slider
 
