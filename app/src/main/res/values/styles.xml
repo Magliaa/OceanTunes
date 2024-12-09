@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RoundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/song_summary_corner_radius</item>
+    </style>
+
+    <style name="RoundedTopChartsSong">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/top_charts_song_corner_radius</item>
+    </style>
+</resources>

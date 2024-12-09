@@ -6,17 +6,88 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/text_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+    <!-- Actual size: 80dp, Every margin is increased by 12px to be aligned correctly -->
+
+    <com.tunagold.oceantunes.ui.components.MaterialButton
+        android:id="@+id/my_button"
+        android:layout_width="180dp"
+        android:layout_height="56dp"
+        android:elevation="2dp"
+        app:buttonColor="@color/white"
+        app:buttonText="Scopri di più"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.93"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.277"
+        app:setIcon="true" />
+
+    <com.tunagold.oceantunes.ui.components.MaterialFAB
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:contentDescription="Login with SERVICE_NAME"
+        android:padding="16dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        app:icon="@drawable/fab_logo_temp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.219"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.302"
+        tools:ignore="HardcodedText" />
+
+
+
+    <com.tunagold.oceantunes.ui.components.TopChartsSong
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:artist="Artist"
+        app:titlechartssong="Song Title"
+        app:artistchartssong="Artist"
+        app:img="@drawable/unknown_song_img"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793" />
+
+    <com.tunagold.oceantunes.ui.components.MaterialTextInput
+        android:id="@+id/MaterialTextInput"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="250dp"
+        android:layout_height="56dp"
+        app:boxBackgroundColor="@color/white"
+        app:boxStrokeColor="@color/gray"
+        app:endIconMode="password_toggle"
+        app:hintText="Username"
+        app:hintTextColor="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.099"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.142"
+        app:textColor="@color/dark">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            tools:ignore="TextContrastCheck" />
+    </com.tunagold.oceantunes.ui.components.MaterialTextInput>
+
+    <com.tunagold.oceantunes.ui.components.MaterialDivider
+        android:layout_width="320dp"
+        android:layout_height="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.648"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.075" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

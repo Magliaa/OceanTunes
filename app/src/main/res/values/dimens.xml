@@ -2,4 +2,25 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Material Button -->
+    <dimen name="button_corner_radius">100dp</dimen>
+    <dimen name="button_text_size">5dp</dimen>
+    <dimen name="button_icon_size">24dp</dimen>
+
+    <!-- Material FAB -->
+    <dimen name="FAB_corner_radius">16dp</dimen>
+    <dimen name="FAB_icon_size">64dp</dimen>
+
+    <!-- Divider -->
+    <dimen name="divider_thickness">1dp</dimen>
+
+    <!-- Song Summary -->
+    <dimen name="song_summary_corner_radius">28dp</dimen>
+
+    <!-- Top Charts Song -->
+    <dimen name="top_charts_song_corner_radius">18dp</dimen>
+
+    <!-- Data Box -->
+    <dimen name="data_box_corner_radius">18dp</dimen>
 </resources>

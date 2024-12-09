@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.oceantunes"
+    namespace = "com.tunagold.oceantunes"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.oceantunes"
+        applicationId = "com.tunagold.oceantunes"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.glide)
+    implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
