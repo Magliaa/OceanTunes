@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <!-- Contenitore principale per centrare il contenuto -->
+    <LinearLayout
+        android:id="@+id/mainContainer"
+        android:layout_width="443dp"
+        android:layout_height="800dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="300dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/ic_logo_oceantunes" />
+
+        <!-- Campo Username -->
+        <com.tunagold.oceantunes.ui.components.MaterialTextInput
+            android:id="@+id/usernameInput"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:hintText="Username">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Username"/>
+        </com.tunagold.oceantunes.ui.components.MaterialTextInput>
+
+        <!-- Campo Password -->
+        <com.tunagold.oceantunes.ui.components.MaterialTextInput
+            android:id="@+id/passwordInput"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:endIconMode="password_toggle"
+            app:hintText="Password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Password" />
+        </com.tunagold.oceantunes.ui.components.MaterialTextInput>
+
+        <!-- Checkbox Ricordami -->
+        <CheckBox
+            android:id="@+id/rememberMeCheckBox"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="Ricordami"
+            android:textColor="@color/dark"
+            android:textSize="18sp"/>
+
+        <!-- Pulsante Accedi -->
+        <com.tunagold.oceantunes.ui.components.MaterialButton
+            android:id="@+id/loginButton"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/rounded_button"
+            android:text="ACCEDI"
+            android:textColor="@color/white"
+            app:buttonColor="@color/purple3"
+            android:textSize="18sp" />
+
+        <!-- Link password dimenticata -->
+        <TextView
+            android:id="@+id/forgotPasswordText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Hai dimenticato la password?"
+            android:textColor="@color/purple3"
+            android:textSize="16sp" />
+
+        <!-- Testo Oppure -->
+        <TextView
+            android:id="@+id/orText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Oppure"
+            android:textColor="@color/dark"
+            android:textSize="16sp" />
+
+        <!-- Link Registrati -->
+        <TextView
+            android:id="@+id/registerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:text="Registrati"
+            android:textColor="@color/purple3"
+            android:textSize="16sp" />
+
+        <!-- Spazio per spostare la sezione in basso -->
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Divider con "Accedi con" -->
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/divider_thickness"
+                android:layout_weight="1"
+                android:background="@color/dark" />
+
+            <TextView
+                android:id="@+id/loginWithText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:text="Accedi con"
+                android:textColor="@color/dark"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/divider_thickness"
+                android:layout_weight="1"
+                android:background="@color/dark" />
+        </LinearLayout>
+
+        <!-- Pulsanti di accesso con servizi esterni -->
+        <LinearLayout
+            android:id="@+id/socialLoginContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <!-- Pulsante Spotify con MaterialCardView -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="20dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp">
+
+                <ImageButton
+                    android:id="@+id/spotifyButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Accedi con Spotify"
+                    android:src="@drawable/ic_spotify_logo"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Pulsante Google con MaterialCardView -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp">
+
+                <ImageButton
+                    android:id="@+id/googleButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Login with Google"
+                    android:src="@drawable/ic_google_logo"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"/>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
