@@ -22,19 +22,20 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <!-- discrete slider -->
-    <com.google.android.material.slider.Slider
-        android:id="@+id/material_slider"
-        android:layout_width="188dp"
-        android:layout_height="86dp"
-        android:stepSize="1.0"
-        android:valueFrom="0.0"
-        android:valueTo="10.0"
+
+    <com.tunagold.oceantunes.ui.components.MaterialRating
+        android:id="@+id/ratingBar"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="2"
+        android:scaleY="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.289" />
+        app:layout_constraintVertical_bias="0.653" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
