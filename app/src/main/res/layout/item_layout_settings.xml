@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="@dimen/data_box_corner_radius"
+
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     android:paddingLeft="12dp"
@@ -10,8 +10,7 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:backgroundTint="@color/white_smoke"
-    app:cardElevation="1dp"
-    >
+    app:cardCornerRadius="18dp" >
 
     <GridLayout
         android:layout_width="wrap_content"
@@ -22,8 +21,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        >
+        android:layout_marginEnd="16dp" >
 
         <!-- Titles and Drawable-->
 
@@ -35,9 +33,7 @@
             android:paddingStart="0dp"
             android:paddingTop="8dp"
             android:contentDescription="@string/setting1"
-            android:src="@drawable/ic_profile_fillblack_24dp"
-
-            />
+            android:src="@drawable/ic_profile_fillblack_24dp" />
 
         <TextView
             android:id="@+id/setting1"
@@ -55,9 +51,8 @@
             android:layout_height="18dp"
             android:paddingEnd="8dp"
             android:paddingStart="0dp"
-            android:contentDescription="@string/setting1"
-            android:src="@drawable/ic_brush_fillblack_24dp"
-            />
+            android:contentDescription="@string/setting2"
+            android:src="@drawable/ic_brush_fillblack_24dp" />
 
         <TextView
             android:id="@+id/setting2"
@@ -74,9 +69,8 @@
             android:layout_height="18dp"
             android:paddingEnd="8dp"
             android:paddingStart="0dp"
-            android:contentDescription="@string/setting1"
-            android:src="@drawable/ic_download_fillblack_24dp"
-            />
+            android:contentDescription="@string/setting3"
+            android:src="@drawable/ic_download_fillblack_24dp" />
 
         <TextView
             android:id="@+id/setting3"
@@ -93,9 +87,8 @@
             android:layout_height="18dp"
             android:paddingEnd="8dp"
             android:paddingStart="0dp"
-            android:contentDescription="@string/setting1"
-            android:src="@drawable/ic_notifications_fillblack_24dp"
-            />
+            android:contentDescription="@string/setting4"
+            android:src="@drawable/ic_notifications_fillblack_24dp" />
 
         <TextView
             android:id="@+id/setting4"
@@ -112,9 +105,8 @@
             android:layout_height="18dp"
             android:paddingEnd="8dp"
             android:paddingStart="0dp"
-            android:contentDescription="@string/setting1"
-            android:src="@drawable/ic_bolt_fillblack_24dp"
-            />
+            android:contentDescription="@string/setting5"
+            android:src="@drawable/ic_bolt_fillblack_24dp" />
 
         <TextView
             android:id="@+id/setting5"
@@ -131,9 +123,8 @@
             android:layout_height="18dp"
             android:paddingEnd="8dp"
             android:paddingStart="0dp"
-            android:contentDescription="@string/setting1"
-            android:src="@drawable/ic_paragraph_fillblack_24dp"
-            />
+            android:contentDescription="@string/setting6"
+            android:src="@drawable/ic_paragraph_fillblack_24dp" />
 
         <TextView
             android:id="@+id/setting6"
@@ -150,9 +141,8 @@
             android:layout_height="18dp"
             android:paddingEnd="8dp"
             android:paddingStart="0dp"
-            android:contentDescription="@string/setting1"
-            android:src="@drawable/ic_exit_fillblack_24dp"
-            />
+            android:contentDescription="@string/setting7"
+            android:src="@drawable/ic_exit_fillblack_24dp" />
 
         <TextView
             android:id="@+id/setting7"
@@ -162,5 +152,7 @@
             android:textColor="@color/dark"
             android:paddingBottom="8dp"
             android:textSize="12sp" />
+
     </GridLayout>
+
 </com.google.android.material.card.MaterialCardView>

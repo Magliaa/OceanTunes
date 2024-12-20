@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.ProfileFragment">
+    tools:context=".ui.profile.ProfileFragment" >
 
-
-    <!-- aggiungere se implementiamo l'autoscrolling
-            app:autoScroll="true"
-            app:scrollInterval="3000"
-            -->
+    <!--
+        aggiungere se implementiamo l'autoscrolling
+        app:autoScroll="true"
+        app:scrollInterval="3000"
+    -->
     <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
         android:id="@+id/my_carousel"
         android:layout_width="match_parent"
@@ -19,9 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.tunagold.oceantunes.ui.components.MaterialRating
         android:id="@+id/ratingBar"
@@ -35,41 +33,33 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.653" />
+        app:layout_constraintVertical_bias="0.804" />
 
     <com.tunagold.oceantunes.ui.components.Elipses
         android:id="@+id/elipsesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.723"
+        app:layout_constraintHorizontal_bias="0.957"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.108" />
-
+        app:layout_constraintVertical_bias="0.022" />
 
     <com.tunagold.oceantunes.ui.components.Settings
         android:id="@+id/settingsCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.115"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.027"
-        app:layout_constraintTop_toBottomOf="@+id/elipsesButton"
+        app:layout_constraintEnd_toStartOf="@+id/elipsesButton"
+        app:layout_constraintTop_toTopOf="@+id/elipsesButton"
         app:setting1="@string/setting1"
         app:setting2="@string/setting2"
         app:setting3="@string/setting3"
         app:setting4="@string/setting4"
         app:setting5="@string/setting5"
         app:setting6="@string/setting6"
-        app:setting7="@string/setting7"
-
-        />
-
+        app:setting7="@string/setting7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
