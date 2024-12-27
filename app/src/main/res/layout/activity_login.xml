@@ -10,25 +10,26 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <!-- Guideline per il margine superiore -->
+    <!-- Guideline superiore -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/topGuideline"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintGuide_begin="60dp" />
+        app:layout_constraintGuide_percent="0.1" />
 
-    <!-- Guideline per il margine inferiore -->
+    <!-- Guideline inferiore -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/bottomGuideline"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintGuide_end="120dp" />
+        app:layout_constraintGuide_percent="0.9" />
 
     <!-- Logo -->
     <ImageView
         android:id="@+id/logoImage"
-        android:layout_width="306dp"
-        android:layout_height="196dp"
+        android:layout_width="314dp"
+        android:layout_height="155dp"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/logo_desc"
         android:src="@drawable/ic_logo_oceantunes"
         app:layout_constraintWidth_percent="0.5"
@@ -44,8 +45,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/logoImage"
-        app:layout_constraintStart_toStartOf="@id/logoImage"
-        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -60,10 +62,11 @@
         android:id="@+id/passwordInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/usernameInput"
-        app:layout_constraintStart_toStartOf="@id/logoImage"
-        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
         app:endIconMode="password_toggle"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -71,8 +74,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:inputType="textPassword"
             android:hint="@string/password_hint"
+            android:inputType="textPassword"
             android:textColorHint="@color/dark" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
@@ -83,28 +86,29 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/passwordInput"
-        app:layout_constraintStart_toStartOf="@id/logoImage"
-        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
         android:minHeight="48dp"
         android:text="@string/remember_me"
         android:textColor="@color/dark"
         android:textSize="16sp" />
 
+    <!-- Pulsante Accedi -->
     <com.tunagold.oceantunes.ui.components.MaterialButton
         android:id="@+id/loginButton"
-        android:layout_width="130dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/rememberMeCheckBox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.6"
         app:buttonColor="@color/purple3"
         android:minHeight="48dp"
         app:buttonText="@string/login_button"
         android:textColor="@color/white"
-        android:textSize="18sp"
-        android:padding="15dp"
-        app:layout_constraintEnd_toEndOf="@id/logoImage"
-        app:layout_constraintStart_toStartOf="@id/logoImage"
-        app:layout_constraintTop_toBottomOf="@id/rememberMeCheckBox"
-        android:contentDescription="@string/login_button_description" />
+        android:textSize="18sp" />
 
     <!-- Password dimenticata -->
     <TextView
@@ -145,23 +149,23 @@
         android:textColor="@color/purple3"
         android:textSize="14sp" />
 
-    <!-- Divider "Accedi con" -->
+
+
+    <!-- Divider social login  -->
     <LinearLayout
         android:id="@+id/dividerContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="65dp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/registerText"
-        app:layout_constraintStart_toStartOf="@id/logoImage"
-        app:layout_constraintEnd_toEndOf="@id/logoImage">
-
+        app:layout_constraintBottom_toTopOf="@+id/socialLoginContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp">
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
             android:background="@color/gray" />
-
         <TextView
             android:id="@+id/loginWithText"
             android:layout_width="wrap_content"
@@ -170,7 +174,6 @@
             android:text="@string/login_fab"
             android:textColor="@color/dark"
             android:textSize="14sp" />
-
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
@@ -183,12 +186,11 @@
         android:id="@+id/socialLoginContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:gravity="center"
-        app:layout_constraintEnd_toEndOf="@id/logoImage"
-        app:layout_constraintStart_toStartOf="@id/logoImage"
-        app:layout_constraintTop_toBottomOf="@id/dividerContainer">
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp">
         <!-- Spotify Button -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="56dp"

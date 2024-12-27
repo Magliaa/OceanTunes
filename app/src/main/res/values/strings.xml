@@ -15,7 +15,7 @@
     <string name="login_fab">Accedi con</string>
     <string name="username_hint">Username</string>
     <string name="confirm_pwd_hint">Conferma Password</string>
-    <string name="login_text">Accedi</string>
+    <string name="login_text">Sei già registrato? Accedi</string>
     <string name="register_fab">Registrati con</string>
     <string name="logo_desc">Logo di OceanTunes</string>
     <string name="spotify_desc">Accedi con Spotify</string>
