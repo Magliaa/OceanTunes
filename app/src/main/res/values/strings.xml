@@ -4,4 +4,22 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="login_label">Login</string>
+    <string name="login_button">ACCEDI</string>
+    <string name="register_button">REGISTRATI</string>
+    <string name="e_mail_hint">E-mail</string>
+    <string name="password_hint">Password</string>
+    <string name="remember_me">Ricordami</string>
+    <string name="forgot_pwd">Hai dimenticato la password?</string>
+    <string name="or">Oppure</string>
+    <string name="register_text">Registrati</string>
+    <string name="login_fab">Accedi con</string>
+    <string name="username_hint">Username</string>
+    <string name="confirm_pwd_hint">Conferma Password</string>
+    <string name="login_text">Accedi</string>
+    <string name="register_fab">Registrati con</string>
+    <string name="logo_desc">Logo di OceanTunes</string>
+    <string name="spotify_desc">Accedi con Spotify</string>
+    <string name="google_desc">Accedi con Google</string>
+    <string name="register_button_description">Pulsante registrazione\n</string>
+    <string name="login_button_description">Login pulsante\n</string>
 </resources>

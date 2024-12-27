@@ -10,114 +10,127 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
+    <!-- Guideline per il margine superiore -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_begin="60dp" />
+
+    <!-- Guideline per il margine inferiore -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_end="60dp" />
+
     <!-- Logo -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="306dp"
         android:layout_height="196dp"
-        android:layout_marginTop="20dp"
-        android:contentDescription="Logo del servizio OceanTunes"
+        android:contentDescription="@string/logo_desc"
         android:src="@drawable/ic_logo_oceantunes"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.5"
         app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintTop_toTopOf="@id/topGuideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Campo E-mail -->
+    <!-- E-mail -->
     <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/mailInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/logoImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        app:hintText="E-mail">
+        app:layout_constraintStart_toStartOf="@id/logoImage"
+        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:hint="E-mail" />
+            android:hint="@string/e_mail_hint" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
-    <!-- Campo Username -->
+    <!-- Username -->
     <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/usernameInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/mailInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8">
+        app:layout_constraintStart_toStartOf="@id/logoImage"
+        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:hint="Username" />
+            android:hint="@string/username_hint" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
-    <!-- Campo Password -->
+    <!-- Password -->
     <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/passwordInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/usernameInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        app:endIconMode="password_toggle">
+        app:layout_constraintStart_toStartOf="@id/logoImage"
+        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        app:endIconMode="password_toggle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:inputType="textPassword"
-            android:hint="Password" />
+            android:hint="@string/password_hint" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
-    <!-- Campo Conferma Password -->
+    <!-- Conferma Password -->
     <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/passwordConfirmInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/passwordInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        app:endIconMode="password_toggle">
+        app:layout_constraintStart_toStartOf="@id/logoImage"
+        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        app:endIconMode="password_toggle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:inputType="textPassword"
-            android:hint="Conferma Password" />
+            android:hint="@string/confirm_pwd_hint" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
-    <!-- Pulsante Registrati -->
+    <!-- Registrati -->
     <com.tunagold.oceantunes.ui.components.MaterialButton
         android:id="@+id/registerButton"
-        android:layout_width="0dp"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/passwordConfirmInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.5"
-        android:text="Registrati"
-        android:background="@drawable/rounded_button"
-        android:textColor="@color/white"
+        android:layout_marginTop="18dp"
+        app:buttonColor="@color/purple3"
         android:minHeight="48dp"
-        android:textSize="18sp" />
+        app:buttonText="@string/register_button"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="@id/logoImage"
+        app:layout_constraintStart_toStartOf="@id/logoImage"
+        app:layout_constraintTop_toBottomOf="@id/passwordConfirmInput"
+        android:contentDescription="@string/register_button_description" />
 
-    <!-- Testo "Oppure" -->
+    <!-- Oppure -->
     <TextView
         android:id="@+id/orText"
         android:layout_width="wrap_content"
@@ -125,12 +138,12 @@
         app:layout_constraintTop_toBottomOf="@id/registerButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Oppure"
+        android:text="@string/or"
         android:textColor="@color/dark"
         android:textSize="14sp"
         android:layout_marginTop="16dp" />
 
-    <!-- Link Registrati -->
+    <!-- Accedi -->
     <TextView
         android:id="@+id/registerText"
         android:layout_width="wrap_content"
@@ -138,19 +151,18 @@
         app:layout_constraintTop_toBottomOf="@id/orText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Accedi"
+        android:text="@string/login_text"
         android:textColor="@color/purple3"
         android:textSize="14sp"
         android:layout_marginTop="16dp" />
 
-    <!-- Divider con testo "Registrati con" -->
+    <!-- Divider Registrati con -->
     <LinearLayout
         android:id="@+id/dividerContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="40dp"
         android:gravity="center"
-        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@id/logoImage"
         app:layout_constraintStart_toStartOf="@id/logoImage"
         app:layout_constraintTop_toBottomOf="@id/registerText">
@@ -166,7 +178,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:text="Registrati con"
+            android:text="@string/register_fab"
             android:textColor="@color/dark"
             android:textSize="14sp" />
 
@@ -182,9 +194,8 @@
         android:id="@+id/socialLoginContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="32dp"
         android:gravity="center"
-        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@id/logoImage"
         app:layout_constraintStart_toStartOf="@id/logoImage"
         app:layout_constraintTop_toBottomOf="@id/dividerContainer">
@@ -204,7 +215,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_spotify_logo"
-                android:contentDescription="Accedi con Spotify"
+                android:contentDescription="@string/spotify_desc"
                 android:scaleType="centerInside"
                 android:padding="8dp" />
         </com.google.android.material.card.MaterialCardView>
@@ -223,11 +234,10 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_google_logo"
-                android:contentDescription="Accedi con Google"
+                android:contentDescription="@string/google_desc"
                 android:scaleType="centerInside"
                 android:padding="8dp" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
