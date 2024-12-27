@@ -39,8 +39,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="Username" />
+            android:minHeight="48dp" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
     <!-- Campo Password -->
@@ -53,14 +52,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
         app:endIconMode="password_toggle"
-        app:hintText="Password">
+        app:hintText="Password" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:inputType="textPassword"
-            android:hint="Password" />
+            android:inputType="textPassword" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
     <!-- Checkbox Ricordami -->

@@ -21,4 +21,10 @@
         android:name="com.tunagold.oceantunes.ui.profile.ProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.tunagold.oceantunes.ui.login.LoginFragment"
+        android:label="@string/login_label"
+        tools:layout="@layout/activity_login" />
 </navigation>

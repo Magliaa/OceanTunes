@@ -18,4 +18,9 @@
         android:icon="@menu/bottom_nav_profile_selector"
         android:title="@string/title_notifications" />
 
+    <item
+        android:id="@+id/navigation_login"
+        android:icon="@drawable/ic_arrow_right"
+        android:title="@string/login_label" />
+
 </menu>
