@@ -192,43 +192,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="16dp">
         <!-- Spotify Button -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginEnd="16dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="@android:color/white">
-
-            <ImageButton
-                android:id="@+id/spotifyButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_spotify_logo"
-                android:contentDescription="@string/spotify_desc"
-                android:scaleType="centerInside"
-                android:padding="8dp" />
-        </com.google.android.material.card.MaterialCardView>
+        <com.tunagold.oceantunes.ui.components.MaterialFAB
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Login with spotify"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
+            app:icon="@drawable/ic_spotify_logo"
+            android:scaleType="centerInside"
+            tools:ignore="HardcodedText" />
 
         <!-- Google Button -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="@android:color/white">
-
-            <ImageButton
-                android:id="@+id/googleButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_google_logo"
-                android:contentDescription="@string/google_desc"
-                android:scaleType="centerInside"
-                android:padding="8dp" />
-        </com.google.android.material.card.MaterialCardView>
+        <com.tunagold.oceantunes.ui.components.MaterialFAB
+            android:layout_marginStart="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Login with google"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
+            app:icon="@drawable/ic_google_logo"
+            android:scaleType="centerInside"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
