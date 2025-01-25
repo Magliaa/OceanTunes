@@ -8,7 +8,11 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.tunagold.oceantunes.ui.home.HomeFragment"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_songsGridFragment"
+            app:destination="@id/songsGridFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_search"
@@ -27,4 +31,10 @@
         android:name="com.tunagold.oceantunes.ui.login.LoginFragment"
         android:label="@string/login_label"
         tools:layout="@layout/activity_login" />
+
+    <fragment
+        android:id="@+id/songsGridFragment"
+        android:name="com.tunagold.oceantunes.ui.songsgrid.SongsGridFragment"
+        android:label="Songs Grid"
+        tools:layout="@layout/fragment_songsgrid" />
 </navigation>

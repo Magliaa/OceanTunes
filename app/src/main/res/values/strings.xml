@@ -27,4 +27,7 @@
     <string name="fy">In base ai tuoi gusti</string>
     <string name="top_charts">Top charts</string>
     <string name="find_out_more">Scopri di più</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="back">back\n</string>
 </resources>

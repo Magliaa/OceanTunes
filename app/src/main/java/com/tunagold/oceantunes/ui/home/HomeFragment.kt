@@ -13,7 +13,8 @@ import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
 import com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
 import android.widget.TextView
 import com.google.android.material.imageview.ShapeableImageView
-
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.NavController
 
 class HomeFragment : Fragment() {
 
@@ -44,6 +45,15 @@ class HomeFragment : Fragment() {
         val adapter = CarouselAdapter(items)
         materialCarousel.adapter = adapter
         materialCarousel2.adapter = adapter
+
+        // Configura il pulsante "Scopri di più"
+        val nowMoreButton = view.findViewById<View>(R.id.nowMoreButton)
+        nowMoreButton.setOnClickListener {
+            // Naviga verso SongsGridFragment
+            val action = R.id.action_homeFragment_to_songsGridFragment
+            findNavController().navigate(action)
+
+        }
     }
 
     private fun populateTopCharts() {
