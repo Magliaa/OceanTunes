@@ -166,7 +166,7 @@ Gli attributi del sotto-elemento sono personalizzabili, ma il design di oceantun
 
 ***Struttura***: Self-closing `<com.google.android.material.slider.Slider>`.
 
-***stile***: slider discreto 
+***stile***: slider discreto
 
 ### Attributi
 
@@ -175,3 +175,99 @@ Gli attributi del sotto-elemento sono personalizzabili, ma il design di oceantun
 `android:valueFrom: float` - Permette di decidere il valore minimo dello slider.
 
 `android:valueTo: float` - Permette di decidere il valore massimo dello slider.
+
+## MaterialRating
+
+**Tag name**: `com.tunagold.oceantunes.ui.components.MaterialRating`.
+
+**Struttura**: Self-closing - `<com.tunagold.oceantunes.ui.components.MaterialRating />`.
+
+**Descrizione**: Un componente RatingBar personalizzato che permette agli utenti di selezionare una valutazione con un numero di stelle predefinito. Mostra un Toast con la valutazione selezionata quando l'utente modifica il valore.
+
+### Attributi
+
+`android:numStars: int` - Permette di impostare il numero di stelle visibili (default: 5).
+
+`android:stepSize: float` - Permette di impostare la granularità della valutazione (default: 0.5).
+
+`android:isIndicator: Boolean` - Permette di impostare se il RatingBar è solo in modalità visualizzazione (default: false).
+
+### Metodi
+
+`getRatingValue(): Float` - Restituisce il valore corrente della valutazione.
+
+`setRatingValue(rating: Float)` - Imposta il valore della valutazione.
+
+## Elipses
+
+**Tag name**: `com.tunagold.oceantunes.ui.components.Elipses`.
+
+**Struttura**: Self-closing - `<com.tunagold.oceantunes.ui.components.Elipses />`.
+
+**Descrizione**: Un componente personalizzato che rappresenta un pulsante con un'icona di ellissi (tre puntini verticali). Quando viene cliccato, permette di mostrare o nascondere una vista associata (ad esempio, una card di impostazioni).
+
+### Attributi
+
+`app:elipsesIcon: reference` - Permette di impostare un'icona personalizzata per il pulsante. Il valore di default è `R.drawable.ic_vertdots_fillblack_24dp`.
+
+### Comportamento
+
+- Al click, il componente alterna la visibilità di una vista associata (ad esempio, una card di impostazioni) tra `VISIBLE` e `GONE`.
+- La vista associata viene cercata tramite l'ID `R.id.settingsCard` nel layout genitore.
+
+## SettingsDrawer
+
+**Tag name**: `com.tunagold.oceantunes.ui.components.Settings`.
+
+**Struttura**: Non self-closing - `<com.tunagold.oceantunes.ui.components.Settings></ ...>`.
+
+**Descrizione**: Un componente personalizzato che rappresenta un drawer di impostazioni con sette campi di testo configurabili. Ogni campo di testo può essere personalizzato tramite attributi specifici.
+
+### Attributi
+
+`app:setting1: String` - Permette di impostare il testo per il primo campo di impostazioni.
+
+`app:setting2: String` - Permette di impostare il testo per il secondo campo di impostazioni.
+
+`app:setting3: String` - Permette di impostare il testo per il terzo campo di impostazioni.
+
+`app:setting4: String` - Permette di impostare il testo per il quarto campo di impostazioni.
+
+`app:setting5: String` - Permette di impostare il testo per il quinto campo di impostazioni.
+
+`app:setting6: String` - Permette di impostare il testo per il sesto campo di impostazioni.
+
+`app:setting7: String` - Permette di impostare il testo per il settimo campo di impostazioni.
+
+### Comportamento
+
+- Il componente infla il layout `R.layout.item_layout_settings` e popola i campi di testo con i valori forniti tramite gli attributi.
+
+## MaterialSearchBar
+
+**Tag name**: `com.tunagold.oceantunes.ui.components.MaterialSearchBar`.
+
+**Struttura**: Non self-closing - `<com.tunagold.oceantunes.ui.components.MaterialSearchBar></ ...>`.
+
+**Descrizione**: Un componente personalizzato che rappresenta una barra di ricerca con un campo di input e funzionalità integrate per la gestione delle azioni di ricerca e cancellazione.
+
+### Attributi
+
+- **Nessun attributo specifico**: Il componente utilizza un layout predefinito (`R.layout.searchbar_layout`) e non richiede attributi personalizzati.
+
+### Metodi
+
+`getQuery(): String` - Restituisce il testo attualmente inserito nella barra di ricerca.
+
+`clear()` - Cancella il testo nella barra di ricerca e invoca l'azione di cancellazione, se definita.
+
+### Comportamento
+
+- **Ricerca**: Quando l'utente preme l'azione di ricerca sulla tastiera (IME_ACTION_SEARCH), il componente invoca la lambda `onSearchAction` con il testo inserito.
+- **Cancellazione**: Il metodo `clear()` cancella il testo e invoca la lambda `onClearAction`, se definita.
+
+### Callback
+
+`onSearchAction: ((String) -> Unit)?` - Callback invocato quando l'utente esegue una ricerca, passando il testo inserito.
+
+`onClearAction: (() -> Unit)?` - Callback invocato quando il testo viene cancellato tramite il metodo `clear()`.
