@@ -54,6 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
+            android:maxLines="1"
             android:hint="@string/e_mail_hint" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
@@ -204,14 +205,15 @@
 
         <!-- Google Button -->
         <com.tunagold.oceantunes.ui.components.MaterialFAB
-            android:layout_marginStart="30dp"
+            android:id="@+id/signInWithGoogle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="30dp"
             android:contentDescription="Login with google"
+            android:scaleType="centerInside"
             android:scaleX="1.2"
             android:scaleY="1.2"
             app:icon="@drawable/ic_google_logo"
-            android:scaleType="centerInside"
             tools:ignore="HardcodedText" />
     </LinearLayout>
 
