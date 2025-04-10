@@ -15,6 +15,7 @@ import android.widget.TextView
 import com.google.android.material.imageview.ShapeableImageView
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavController
+import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
 
 class HomeFragment : Fragment() {
 
@@ -34,6 +35,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         // Popola i Top Charts
         populateTopCharts()
 
@@ -41,8 +43,25 @@ class HomeFragment : Fragment() {
         val materialCarousel: MaterialCarousel = view.findViewById(R.id.carouselNowSongs)
         val materialCarousel2: MaterialCarousel = view.findViewById(R.id.carouselRecommended)
 
-        val items = listOf("Sonic 1", "Sonic 2", "Sonic 3", "Sonic 4", "Sonic 5")
-        val adapter = CarouselAdapter(items)
+        val items = listOf(
+            Triple("Sonic 1", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 2", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 3", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 4", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 5", "SEGA", R.drawable.unknown_song_img)
+        )
+        val adapter = CarouselAdapter(items) { selectedItem ->
+            val (title, artist, imgRes) = selectedItem as Triple<*, *, *>
+
+            val dialog = SongCardDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putString("title", title as? String ?: "")
+                    putString("artist", artist as? String ?: "")
+                    putInt("img", imgRes as? Int ?: R.drawable.unknown_song_img)
+                }
+            }
+            dialog.show(parentFragmentManager, "SongCardDialog")
+        }
         materialCarousel.adapter = adapter
         materialCarousel2.adapter = adapter
 

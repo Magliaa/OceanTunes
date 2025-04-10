@@ -11,6 +11,7 @@ import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentProfileBinding
 import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
 import com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
+import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
 
 
 class ProfileFragment : Fragment() {
@@ -43,17 +44,24 @@ class ProfileFragment : Fragment() {
 
         val materialCarousel: MaterialCarousel = view.findViewById(R.id.my_carousel)
 
-        //insert items in the carousel with API
         val items = listOf(
-            "Sonic 1",
-            "Sonic 2",
-            "Sonic 3",
-            "Sonic 4",
-            "Sonic 5"
+            Triple("Sonic 1", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 2", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 3", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 4", "SEGA", R.drawable.unknown_song_img),
+            Triple("Sonic 5", "SEGA", R.drawable.unknown_song_img)
         )
-        val adapter = CarouselAdapter(items)
-        materialCarousel.adapter = adapter
+        val adapter = CarouselAdapter(items) { selectedItem ->
+            val (title, artist, imgRes) = selectedItem as Triple<*, *, *>
 
+            val dialog = SongCardDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putString("title", title as? String ?: "")
+                    putString("artist", artist as? String ?: "")
+                    putInt("img", imgRes as? Int ?: R.drawable.unknown_song_img)
+                }
+            }
+        }
         val slider = view.findViewById<Slider>(R.id.material_slider)
 
         slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
