@@ -23,4 +23,7 @@
 
     <!-- Data Box -->
     <dimen name="data_box_corner_radius">18dp</dimen>
+
+    <!-- Songs grid -->
+    <dimen name="recycler_item_spacing">16dp</dimen>
 </resources>
