@@ -15,7 +15,7 @@ class MaterialSearchBar @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val textInputLayout: TextInputLayout
-    private val editText: TextInputEditText
+    val editText: TextInputEditText
 
     var onSearchAction: ((String) -> Unit)? = null
     var onClearAction: (() -> Unit)? = null

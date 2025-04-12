@@ -58,7 +58,6 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
-        val slider = view.findViewById<Slider>(R.id.material_slider)
 
     }
 

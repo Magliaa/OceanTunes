@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
 import com.tunagold.oceantunes.R
 
-class SongsAdapter(private val songs: List<Triple<String, String, Int>>) :
+class SongsAdapter(private var songs: List<Triple<String, String, Int>>) :
     RecyclerView.Adapter<SongsAdapter.SongViewHolder>() {
 
     // ViewHolder personalizzato
@@ -32,4 +32,10 @@ class SongsAdapter(private val songs: List<Triple<String, String, Int>>) :
     }
 
     override fun getItemCount(): Int = songs.size
+
+    // 🔁 Metodo per aggiornare i dati
+    fun updateData(newSongs: List<Triple<String, String, Int>>) {
+        songs = newSongs
+        notifyDataSetChanged()
+    }
 }

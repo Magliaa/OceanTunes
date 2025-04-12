@@ -34,16 +34,12 @@
     <string name="find_out_more">Scopri di più</string>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
-    <string name="back">back\n</string>
     <string name="aggiungi_ai_preferiti">Aggiungi ai preferiti</string>
     <string name="song_date">Data</string>
     <string name="info_song">Durata\nGenere\nLabel discografica\n</string>
     <string name="chiudi">Chiudi</string>
     <string name="song_name">Nome canzone</string>
-</resources>
     <string name="back">back</string>
-
-    <!-- Settings -->
     <string name="setting1">Modifica Profilo</string>
     <string name="setting2">Temi</string>
     <string name="setting3">Importa da Spotify</string>
@@ -51,4 +47,8 @@
     <string name="setting5">Pass Battaglia</string>
     <string name="setting6">Termini e Condizioni</string>
     <string name="setting7">Esci</string>
+    <string name="vota">Vota</string>
+    <string name="no_results">Nessun risultato trovato.</string>
 </resources>
+
+
