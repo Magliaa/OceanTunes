@@ -32,7 +32,7 @@
     <string name="back">back\n</string>
     <string name="aggiungi_ai_preferiti">Aggiungi ai preferiti</string>
     <string name="song_date">Data</string>
-    <string name="info_song">Durata\nNumero di stream\nLabel discografica\n</string>
+    <string name="info_song">Durata\nGenere\nLabel discografica\n</string>
     <string name="chiudi">Chiudi</string>
     <string name="song_name">Nome canzone</string>
 </resources>
