@@ -82,6 +82,8 @@ Gli attributi del sotto-elemento sono personalizzabili, ma il design di oceantun
 
 ### Attributi
 
+`app:is3segment:` Boolean - Permette di decidere se la databox debba contenere o meno 3 campi (Default: False).
+
 `app:title1: String` - Permette di inserire il primo titolo per il primo dato.
 
 `app:title2: String` - Permette di inserire il secondo titolo per il secondo dato.
