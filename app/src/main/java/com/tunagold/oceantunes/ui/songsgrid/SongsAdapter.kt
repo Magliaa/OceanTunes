@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
 import com.tunagold.oceantunes.R
 
-class SongsAdapter(private var songs: List<Triple<String, String, Int>>) :
-    RecyclerView.Adapter<SongsAdapter.SongViewHolder>() {
+class SongsAdapter(
+    private var songs: List<Triple<String, String, Int>>,
+    private val onItemClick: ((Triple<String, String, Int>) -> Unit)? = null
+) : RecyclerView.Adapter<SongsAdapter.SongViewHolder>() {
 
-    // ViewHolder personalizzato
     class SongViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val songImage: ShapeableImageView = view.findViewById(R.id.songImageID)
         val songTitle: TextView = view.findViewById(R.id.songTitleID)
@@ -26,14 +27,17 @@ class SongsAdapter(private var songs: List<Triple<String, String, Int>>) :
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val song = songs[position]
-        holder.songTitle.text = song.first // Titolo
-        holder.songArtist.text = song.second // Artista
-        holder.songImage.setImageResource(song.third) // Immagine
+        holder.songTitle.text = song.first
+        holder.songArtist.text = song.second
+        holder.songImage.setImageResource(song.third)
+
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(song)
+        }
     }
 
     override fun getItemCount(): Int = songs.size
 
-    // 🔁 Metodo per aggiornare i dati
     fun updateData(newSongs: List<Triple<String, String, Int>>) {
         songs = newSongs
         notifyDataSetChanged()

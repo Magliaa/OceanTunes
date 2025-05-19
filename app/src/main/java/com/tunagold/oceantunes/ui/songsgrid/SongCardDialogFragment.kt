@@ -15,6 +15,20 @@ class SongCardDialogFragment : DialogFragment() {
 
     private var isDismissing = false
 
+    companion object {
+        fun newInstance(song: Triple<String, String, Int>): SongCardDialogFragment {
+            val fragment = SongCardDialogFragment()
+            val args = Bundle().apply {
+                putString("title", song.first)
+                putString("artist", song.second)
+                putInt("img", song.third)
+            }
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.SongCardDialog)

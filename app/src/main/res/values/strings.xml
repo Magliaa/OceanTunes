@@ -49,6 +49,9 @@
     <string name="setting7">Esci</string>
     <string name="vota">Vota</string>
     <string name="no_results">Nessun risultato trovato.</string>
+    <string name="cosa_vuoi_ascoltare">Cosa vuoi valutare?</string>
+    <string name="ricerche_recenti">Ricerche recenti</string>
+    <string name="cancella_cronologia">Cancella cronologia</string>
 </resources>
 
 
