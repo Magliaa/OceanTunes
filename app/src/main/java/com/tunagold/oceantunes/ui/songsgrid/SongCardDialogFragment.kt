@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.ui.components.SongSummary
@@ -88,6 +89,20 @@ class SongCardDialogFragment : DialogFragment() {
 
         root?.startAnimation(fadeIn)
         card?.startAnimation(slideIn)
+
+        val likeButton = view.findViewById<ImageButton>(R.id.btn_like)
+        var isLiked = false
+
+        likeButton.setOnClickListener {
+            isLiked = !isLiked
+            if (isLiked) {
+                likeButton.setImageResource(R.drawable.ic_favorite) //
+                Toast.makeText(requireContext(), "Aggiunta ai preferiti", Toast.LENGTH_SHORT).show()
+            } else {
+                likeButton.setImageResource(R.drawable.ic_favorite_border)
+                Toast.makeText(requireContext(), "Rimossa dai preferiti", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 

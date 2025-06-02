@@ -62,7 +62,7 @@
         android:id="@+id/clearRecentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:buttonText="X"
+        app:buttonText="Cancella"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:minHeight="0dp"

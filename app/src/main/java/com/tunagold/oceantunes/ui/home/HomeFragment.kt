@@ -68,10 +68,20 @@ class HomeFragment : Fragment() {
         // Configura il pulsante "Scopri di più"
         val nowMoreButton = view.findViewById<View>(R.id.nowMoreButton)
         nowMoreButton.setOnClickListener {
-            // Naviga verso SongsGridFragment
             val action = R.id.action_homeFragment_to_songsGridFragment
             findNavController().navigate(action)
+        }
 
+        val recommendedMoreButton = view.findViewById<View>(R.id.recommendedMoreButton)
+        recommendedMoreButton.setOnClickListener {
+            val action = R.id.action_homeFragment_to_songsGridFragment
+            findNavController().navigate(action)
+        }
+
+        val topCharts = view.findViewById<View>(R.id.topChartsLabel)
+        topCharts.setOnClickListener {
+            val action = R.id.action_homeFragment_to_songsGridFragment
+            findNavController().navigate(action)
         }
     }
 
@@ -93,12 +103,23 @@ class HomeFragment : Fragment() {
         )
 
         topChartsSongs.zip(topChartsViews).forEach { (song, view) ->
-            // Accesso diretto ai componenti del layout di TopChartsSong
             view.findViewById<ShapeableImageView>(R.id.topChartsSongImageID).setImageResource(song.third)
             view.findViewById<TextView>(R.id.topChartsSongTitleID).text = song.first
             view.findViewById<TextView>(R.id.topChartsSongArtistID).text = song.second
+
+            view.setOnClickListener {
+                val dialog = SongCardDialogFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("title", song.first)
+                        putString("artist", song.second)
+                        putInt("img", song.third)
+                    }
+                }
+                dialog.show(parentFragmentManager, "SongCardDialog")
+            }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
