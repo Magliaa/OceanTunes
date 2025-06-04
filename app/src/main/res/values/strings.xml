@@ -1,8 +1,11 @@
 <resources>
+    <!-- General -->
     <string name="app_name">OceanTunes</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <!-- Login & Registration -->
     <string name="login_label">Login</string>
     <string name="login_button">ACCEDI</string>
     <string name="register_button">REGISTRATI</string>
@@ -20,8 +23,10 @@
     <string name="logo_desc">Logo di OceanTunes</string>
     <string name="spotify_desc">Accedi con Spotify</string>
     <string name="google_desc">Accedi con Google</string>
-    <string name="register_button_description">Pulsante registrazione\n</string>
-    <string name="login_button_description">Login pulsante\n</string>
+    <string name="register_button_description">Pulsante registrazione</string>
+    <string name="login_button_description">Login pulsante</string>
+
+    <!-- Navigation -->
     <string name="naviga_le_canzoni">Naviga le canzoni del momento.</string>
     <string name="trending_now">In tendenza ora</string>
     <string name="fy">In base ai tuoi gusti</string>
@@ -29,5 +34,14 @@
     <string name="find_out_more">Scopri di più</string>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
-    <string name="back">back\n</string>
+    <string name="back">back</string>
+
+    <!-- Settings -->
+    <string name="setting1">Modifica Profilo</string>
+    <string name="setting2">Temi</string>
+    <string name="setting3">Importa da Spotify</string>
+    <string name="setting4">Notifiche</string>
+    <string name="setting5">Pass Battaglia</string>
+    <string name="setting6">Termini e Condizioni</string>
+    <string name="setting7">Esci</string>
 </resources>
