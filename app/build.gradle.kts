@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
     id("kotlin-kapt")
     id("com.google.gms.google-services") version "4.4.2" apply false
 }
@@ -86,4 +86,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.volley)
+
+    implementation("io.coil-kt:coil:2.4.0")
 }

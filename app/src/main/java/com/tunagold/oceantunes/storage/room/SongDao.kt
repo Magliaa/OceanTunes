@@ -29,6 +29,9 @@ interface SongDao {
     @Query("SELECT * FROM Song ORDER BY favNumber DESC LIMIT 100")
     fun getMostFavoriteSongs(): Flow<List<SongRoom>>
 
+    @Query("SELECT * FROM Song ORDER BY ratersNumber DESC LIMIT 100")
+    fun getMostClickedSongs(): Flow<List<SongRoom>>
+
     @Insert
     suspend fun insertSong(song: SongRoom)
 

@@ -44,6 +44,10 @@ class SongRepository(private val songDao: SongDao) : ISongRepository {
         return Result.Success(songDao.getMostFavoriteSongs().catch { emit(emptyList()) })
     }
 
+    override fun getMostClickedSongs(): Result<Flow<List<SongRoom>>> {
+        return Result.Success(songDao.getMostClickedSongs().catch { emit(emptyList()) })
+    }
+
     override suspend fun insertSong(song: SongRoom): Result<Unit> {
         return try {
             songDao.insertSong(song)

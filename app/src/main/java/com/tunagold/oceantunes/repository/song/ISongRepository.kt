@@ -45,6 +45,11 @@ interface ISongRepository {
     fun getMostFavoriteSongs(): Result<Flow<List<SongRoom>>>
 
     /**
+     * Retrieve the flow of the most clicked songs
+     */
+    fun getMostClickedSongs(): Result<Flow<List<SongRoom>>>
+
+    /**
      * Insert a song into the data source.
      */
     suspend fun insertSong(song: SongRoom): Result<Unit>
