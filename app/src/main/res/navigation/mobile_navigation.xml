@@ -11,7 +11,12 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_songsGridFragment"
-            app:destination="@id/songsGridFragment" />
+            app:destination="@id/songsGridFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+
     </fragment>
 
     <fragment
@@ -24,7 +29,17 @@
         android:id="@+id/navigation_profile"
         android:name="com.tunagold.oceantunes.ui.profile.ProfileFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+
+        <action
+            android:id="@+id/action_navigation_profile_to_songsGridFragment"
+            app:destination="@id/songsGridFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/navigation_login"
@@ -37,4 +52,5 @@
         android:name="com.tunagold.oceantunes.ui.songsgrid.SongsGridFragment"
         android:label="Songs Grid"
         tools:layout="@layout/fragment_songsgrid" />
+
 </navigation>

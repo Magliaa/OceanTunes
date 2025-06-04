@@ -13,6 +13,17 @@ class SongSummary @JvmOverloads constructor (
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
+    fun setTitle(text: String?) {
+        songTitle.text = text
+    }
+
+    fun setArtist(text: String?) {
+        songArtist.text = text
+    }
+
+    fun setImage(resId: Int) {
+        songImage.setImageResource(resId)
+    }
 
     private val songImage: ShapeableImageView
     private val songTitle: TextView
@@ -43,7 +54,6 @@ class SongSummary @JvmOverloads constructor (
         songImage.setImageResource(img)
         songTitle.text = title
         songArtist.text = artist
-
         attributes.recycle()
     }
 }
