@@ -22,6 +22,7 @@ class SongsGridFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate il layout XML associato
         return inflater.inflate(R.layout.fragment_songsgrid, container, false)
     }
 
@@ -31,11 +32,13 @@ class SongsGridFragment : Fragment() {
 
         setSongsGridTitle("Titolo della griglia")
 
+        // Configura il RecyclerView
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_songs)
         val spacingInPixels = resources.getDimensionPixelSize(R.dimen.recycler_item_spacing)
         recyclerView.addItemDecoration(SpacingItemDecoration(spacingInPixels))
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
+        // Simula dati
         val songs = listOf(
             Triple("Blinding Lights", "The Weeknd", R.drawable.unknown_song_img),
             Triple("Levitating", "Dua Lipa", R.drawable.unknown_song_img),
@@ -47,18 +50,7 @@ class SongsGridFragment : Fragment() {
             Triple("Peaches", "Justin Bieber", R.drawable.unknown_song_img),
             Triple("Montero", "Lil Nas X", R.drawable.unknown_song_img)
         )
-
-        recyclerView.adapter = SongsAdapter(songs) { song ->
-            val (title, artist, imgRes) = song
-            val dialog = SongCardDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putString("title", title)
-                    putString("artist", artist)
-                    putInt("img", imgRes)
-                }
-            }
-            dialog.show(parentFragmentManager, "SongCardDialog")
-        }
+        recyclerView.adapter = SongsAdapter(songs)
 
         view.findViewById<View>(R.id.btn_back).setOnClickListener {
             findNavController().popBackStack()
