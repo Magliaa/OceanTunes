@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services") version "4.4.2"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
     id("kotlin-kapt")
-    id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
 android {
@@ -16,6 +16,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -49,14 +50,17 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.auth.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
 
     // AndroidX & UI
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.androidx.material)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.runtime.android)
+    implementation(libs.androidx.appcompat)
 
     // Lifecycle & Navigation
     implementation(libs.androidx.lifecycle.livedata.ktx)
@@ -87,5 +91,16 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.volley)
 
-    implementation("io.coil-kt:coil:2.4.0")
+    //implementation(libs.coil)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+
+    // Google Sign-In
+    implementation(libs.play.services.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.google.identity)
 }
