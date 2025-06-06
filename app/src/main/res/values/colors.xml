@@ -11,11 +11,17 @@
     <!-- Application Palette  -->
     <color name="dark">#1E1E1E</color>
     <color name="gray">#49454F</color>
+    <color name="light_gray">#EDEDED</color>
     <color name="white">#FFFFFF</color>
+    <color name="white_smoke">#F5F5F5</color>"
 
     <color name="purple1">#553C68</color>
     <color name="purple2">#65558F</color>
     <color name="purple3">#6B48EC</color>
     <color name="purple4">#8666FF</color>
     <color name="purple5">#E5D1F4</color>
+
+    <color name="md_theme_light_outline">#000000</color>
+    <color name="md_theme_light_onSurfaceVariant">#000000</color>
+
 </resources>
