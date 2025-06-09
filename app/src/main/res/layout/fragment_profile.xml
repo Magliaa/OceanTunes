@@ -242,8 +242,6 @@
             android:visibility="gone"
             android:elevation="100dp"
             app:setting1="Modifica profilo"
-            app:setting2="Notifiche"
-            app:setting3="Termini e Condizioni"
             app:setting4="Esci" />
     </FrameLayout>
 

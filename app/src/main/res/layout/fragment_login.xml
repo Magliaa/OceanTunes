@@ -111,26 +111,13 @@
         android:textColor="@color/white"
         android:textSize="18sp" />
 
-    <!-- Password dimenticata -->
-    <TextView
-        android:id="@+id/forgotPasswordText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/forgot_pwd"
-        android:textColor="@color/purple3"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/logoImage"
-        app:layout_constraintEnd_toEndOf="@id/logoImage"
-        app:layout_constraintTop_toBottomOf="@id/loginButton" />
-
     <!-- Oppure -->
     <TextView
         android:id="@+id/orText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/forgotPasswordText"
+        app:layout_constraintTop_toBottomOf="@id/loginButton"
         app:layout_constraintStart_toStartOf="@id/logoImage"
         app:layout_constraintEnd_toEndOf="@id/logoImage"
         android:text="@string/or"
@@ -148,7 +135,10 @@
         app:layout_constraintEnd_toEndOf="@id/logoImage"
         android:text="@string/register_text"
         android:textColor="@color/purple3"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:clickable="true"
+        android:focusable="true"
+        />
 
 
 
@@ -193,16 +183,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="16dp">
-        <!-- Spotify Button -->
-        <com.tunagold.oceantunes.ui.components.MaterialFAB
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="Login with spotify"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
-            app:icon="@drawable/ic_spotify_logo"
-            android:scaleType="centerInside"
-            tools:ignore="HardcodedText" />
 
         <!-- Google Button -->
         <com.tunagold.oceantunes.ui.components.MaterialFAB

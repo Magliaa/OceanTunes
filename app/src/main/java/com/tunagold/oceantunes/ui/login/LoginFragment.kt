@@ -8,27 +8,28 @@ import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.tunagold.oceantunes.databinding.ActivityLoginBinding
-import com.tunagold.oceantunes.utils.GoogleAuthHelper
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.tunagold.oceantunes.databinding.FragmentLoginBinding
 import com.tunagold.oceantunes.utils.ToastHelper
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
+import com.tunagold.oceantunes.R
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
-    private var _binding: ActivityLoginBinding? = null
+    private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    private lateinit var authHelper: GoogleAuthHelper
+
     private lateinit var toastHelper: ToastHelper
+
+    private val loginViewModel: LoginViewModel by viewModels()
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
         result.data?.let { data ->
-            lifecycleScope.launch {
-                handleGoogleSignInResult(data)
-            }
+            loginViewModel.handleGoogleSignInIntentResult(data)
         }
     }
 
@@ -37,43 +38,66 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        _binding = ActivityLoginBinding.inflate(inflater, container, false)
-        authHelper = GoogleAuthHelper(requireContext())
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
         toastHelper = ToastHelper(requireContext())
 
+        setupLoginButton()
         setupGoogleSignInButton()
+
+        binding.registerText.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
 
         return binding.root
     }
 
-    private fun setupGoogleSignInButton() {
-        binding.signInWithGoogle.setOnClickListener {
-            lifecycleScope.launch {
-                try {
-                    val signInResult = authHelper.beginSignIn()
-                    val intentSenderRequest = IntentSenderRequest.Builder(
-                        signInResult.pendingIntent.intentSender
-                    ).build()
-                    googleSignInLauncher.launch(intentSenderRequest)
-                } catch (e: Exception) {
-                    toastHelper.showShort("Errore: ${e.message}")
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeViewModel()
+    }
+
+    private fun setupLoginButton() {
+        binding.loginButton.setOnClickListener {
+            val email = binding.usernameInput.editText?.text?.toString()?.trim().orEmpty()
+            val password = binding.passwordInput.editText?.text?.toString()?.trim().orEmpty()
+
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                loginViewModel.signIn(email, password)
+            } else {
+                toastHelper.showShort("Email e password sono richieste")
             }
         }
     }
 
-    private suspend fun handleGoogleSignInResult(data: Intent) {
-        when (val result = authHelper.handleSignInResult(data)) {
-            is GoogleAuthHelper.AuthResult.Success -> {
+    private fun setupGoogleSignInButton() {
+        binding.signInWithGoogle.setOnClickListener {
+            loginViewModel.initiateGoogleSignIn()
+        }
+    }
+
+    private fun observeViewModel() {
+        loginViewModel.signInResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess {
                 toastHelper.showShort("Accesso effettuato con successo")
-                // Naviga alla schermata principale
-                // findNavController().navigate(R.id.action_login_to_home)
-            }
-            is GoogleAuthHelper.AuthResult.Failure -> {
-                toastHelper.showShort("Accesso fallito: ${result.exception.message}")
+                findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
+            }.onFailure {
+                toastHelper.showShort("Accesso fallito: ${it.message}")
             }
         }
+
+        loginViewModel.googleSignInResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess {
+                toastHelper.showShort("Accesso effettuato con successo")
+                findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
+            }.onFailure {
+                toastHelper.showShort("Accesso fallito: ${it.message}")
+            }
+        }
+
+       /* loginViewModel.googleSignInIntentSenderRequest.observe(viewLifecycleOwner) { intent ->
+            val intentSenderRequest = IntentSenderRequest.Builder(intent.intentSender).build()
+            googleSignInLauncher.launch(intentSenderRequest)
+        }*/
     }
 
     override fun onDestroyView() {

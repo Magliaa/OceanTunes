@@ -7,6 +7,7 @@
 
     <!-- Login & Registration -->
     <string name="login_label">Login</string>
+    <string name="register">Register</string>
     <string name="login_button">ACCEDI</string>
     <string name="register_button">REGISTRATI</string>
     <string name="e_mail_hint">E-mail</string>

@@ -9,17 +9,24 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentProfileBinding
 import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
 import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
 import android.content.Context
+import com.tunagold.oceantunes.utils.ToastHelper
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
+    private val profileViewModel: ProfileViewModel by viewModels()
+    private lateinit var toastHelper: ToastHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -32,7 +39,8 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Imposta animazione fade per il settings drawer
+        toastHelper = ToastHelper(requireContext())
+
         val settingsCard = requireView().findViewById<View>(R.id.settingsCard)
         settingsCard.alpha = 0f
         settingsCard.visibility = View.GONE
@@ -50,32 +58,27 @@ class ProfileFragment : Fragment() {
         }
 
         binding.settingsCard.findViewById<View>(R.id.setting1).setOnClickListener {
-            EditProfileDialogFragment(currentName = "Mario Rossi") { name, imageUri ->
-                binding.profileName.text = name
+            // Get current username from ViewModel to pre-fill the dialog
+            val currentUsername = profileViewModel.currentUser.value?.displayName ?: ""
+            EditProfileDialogFragment(currentName = currentUsername) { newName, imageUri ->
+                profileViewModel.updateUsername(newName)
                 imageUri?.let {
                     binding.profileImage.setImageURI(it)
                 }
             }.show(parentFragmentManager, "EditProfileDialog")
         }
 
-        binding.settingsCard.findViewById<View>(R.id.setting2).setOnClickListener {
-            showNotificationSettingsDialog()
-        }
-
-        binding.settingsCard.findViewById<View>(R.id.setting3).setOnClickListener {
-            // TODO: implement ToS
-        }
-
         binding.settingsCard.findViewById<View>(R.id.setting4).setOnClickListener {
-            // TODO: implement logout
+            // Implement logout
+            profileViewModel.signOut()
         }
 
         setupCarousels()
-        updateDataBox() // Mock popolamento
+        // No longer using mock data for updateDataBox directly
+        // updateDataBox()
 
         val action = R.id.action_navigation_profile_to_songsGridFragment
 
-        // Azione bottoni "Scopri tutto"
         binding.seeAllFavorites.setOnClickListener {
             findNavController().navigate(action)
         }
@@ -84,25 +87,36 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-
-
+        observeViewModel() // Observe ViewModel LiveData
+        profileViewModel.fetchCurrentUserDetails() // Fetch user details on start
     }
 
-
-    private fun showNotificationSettingsDialog() {
-        val dialog = NotificationSettingsDialogFragment(
-            trendingEnabled = true, // TODO: caricare da SharedPreferences
-            topSongEnabled = false  // TODO: caricare da SharedPreferences
-        ) { trending, topSong ->
-            // TODO: salva le preferenze aggiornate
-            val prefs = requireContext().getSharedPreferences("profile_prefs", Context.MODE_PRIVATE)
-            prefs.edit()
-                .putBoolean("notif_trending", trending)
-                .putBoolean("notif_top_song", topSong)
-                .apply()
+    private fun observeViewModel() {
+        profileViewModel.currentUser.observe(viewLifecycleOwner) { user ->
+            user?.let {
+                binding.profileName.text = it.displayName
+            } ?: run {
+                binding.profileName.text = "Guest"
+            }
         }
 
-        dialog.show(parentFragmentManager, "NotificationSettingsDialog")
+        profileViewModel.updateUsernameResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess {
+                toastHelper.showShort("Nome utente aggiornato con successo!")
+            }.onFailure {
+                toastHelper.showShort("Errore aggiornamento nome utente: ${it.message}")
+            }
+        }
+
+        profileViewModel.signOutResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess {
+                toastHelper.showShort("Disconnessione effettuata con successo!")
+                // Navigate back to the authentication activity (LoginFragment)
+                findNavController().navigate(R.id.auth_nav_graph) // This will navigate to the AuthActivity and its start destination (LoginFragment)
+            }.onFailure {
+                toastHelper.showShort("Errore disconnessione: ${it.message}")
+            }
+        }
     }
 
     private fun toggleSettingsDrawer() {
@@ -123,7 +137,6 @@ class ProfileFragment : Fragment() {
         }.start()
     }
 
-
     private fun animateFadeOutThenNavigate(view: View, destinationId: Int) {
         view.animate().alpha(0f).setDuration(300).withEndAction {
             findNavController().navigate(destinationId)
@@ -132,7 +145,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateDataBox() {
-        // Mock data
         val favoriteCount = 342
         val ratedCount = 321
 

@@ -13,9 +13,5 @@ data class SongRoom (
     @TypeConverters(StringListConverter::class) override val artists: List<String>,
     override val image: String,
     override val releaseDate: String,
-    @TypeConverters(StringListConverter::class) override val credits: List<String>,
-    override val ranking: Int,
-    override val avgScore: Float,
-    override val favNumber: Int,
-    override val ratersNumber: Int
-) : Song(id, title, artists, album, image, releaseDate, credits, ranking, avgScore, favNumber, ratersNumber)
+    @TypeConverters(StringListConverter::class) override val credits: List<String>
+) : Song(id, title, artists, album, image, releaseDate, credits)

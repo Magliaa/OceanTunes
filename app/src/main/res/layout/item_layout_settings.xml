@@ -48,45 +48,6 @@
             android:background="?attr/selectableItemBackground"/>
 
         <ImageView
-            android:id="@+id/settingsIcon2"
-            android:layout_width="26dp"
-            android:layout_height="18dp"
-            android:paddingEnd="8dp"
-            android:paddingStart="0dp"
-            android:contentDescription="@string/setting2"
-            android:src="@drawable/ic_notifications_fillblack_24dp" />
-
-        <TextView
-            android:id="@+id/setting2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textColor="@color/dark"
-            android:paddingBottom="12dp"
-            android:textSize="12sp"
-            android:background="?attr/selectableItemBackground"/>
-
-        <ImageView
-            android:id="@+id/settingsIcon3"
-            android:layout_width="26dp"
-            android:layout_height="18dp"
-            android:paddingEnd="8dp"
-            android:paddingStart="0dp"
-            android:contentDescription="@string/setting3"
-            android:src="@drawable/ic_paragraph_fillblack_24dp"
-            android:background="?attr/selectableItemBackground"/>
-
-        <TextView
-            android:id="@+id/setting3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textColor="@color/dark"
-            android:paddingBottom="12dp"
-            android:textSize="12sp"
-            android:background="?attr/selectableItemBackground"/>
-
-        <ImageView
             android:id="@+id/settingsIcon4"
             android:layout_width="26dp"
             android:layout_height="18dp"

@@ -39,12 +39,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_login"
-        android:name="com.tunagold.oceantunes.ui.login.LoginFragment"
-        android:label="@string/login_label"
-        tools:layout="@layout/activity_login" />
-
-    <fragment
         android:id="@+id/songsGridFragment"
         android:name="com.tunagold.oceantunes.ui.songsgrid.SongsGridFragment"
         android:label="Songs Grid"

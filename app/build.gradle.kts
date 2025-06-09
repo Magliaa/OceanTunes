@@ -1,19 +1,20 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services") version "4.4.2"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
+    alias(libs.plugins.google.services)
+    id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin.get()
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "com.tunagold.oceantunes"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.tunagold.oceantunes"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -31,12 +32,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -50,8 +51,6 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.auth.ktx)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
 
     // AndroidX & UI
     implementation(libs.androidx.core.ktx)
@@ -72,7 +71,7 @@ dependencies {
     implementation(libs.glide)
 
     // Room
-    implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
 
@@ -89,18 +88,22 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.volley)
 
-    //implementation(libs.coil)
+    // Volley
+    implementation(libs.volley)
+    implementation(libs.firebase.firestore.ktx)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-
-    // Google Sign-In
+    // Google Sign-In and Credentials
     implementation(libs.play.services.auth)
     implementation(libs.androidx.credentials)
     implementation(libs.google.identity)
+
+    // Hilt
+    implementation(libs.hilt.android.v2562)
+    kapt(libs.hilt.android.compiler)
 }
+

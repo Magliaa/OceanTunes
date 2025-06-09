@@ -140,7 +140,10 @@
         android:text="@string/login_text"
         android:textColor="@color/purple3"
         android:textSize="14sp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        />
 
     <!-- Divider "Registrati con" -->
     <LinearLayout
@@ -182,17 +185,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="16dp">
-        <!-- Spotify Button -->
-        <!-- Spotify Button -->
-        <com.tunagold.oceantunes.ui.components.MaterialFAB
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="Login with spotify"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
-            app:icon="@drawable/ic_spotify_logo"
-            android:scaleType="centerInside"
-            tools:ignore="HardcodedText" />
 
         <!-- Google Button -->
         <com.tunagold.oceantunes.ui.components.MaterialFAB
