@@ -1,33 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="204dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/songImageID"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:elevation="2dp"
-        app:shapeAppearanceOverlay="@style/RoundedImageView"
-        tools:ignore="ImageContrastCheck" />
+    android:layout_width="match_parent"  android:layout_height="wrap_content"
+    android:padding="8dp"> <com.google.android.material.imageview.ShapeableImageView
+    android:id="@+id/songImageID"
+    android:layout_width="0dp"  android:layout_height="0dp"  android:elevation="2dp"
+    android:scaleType="centerCrop"
+    android:src="@drawable/unknown_song_img"
+    app:layout_constraintDimensionRatio="H,1:1" app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:shapeAppearanceOverlay="@style/RoundedImageView"
+    tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/songTitleID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="20dp"
+        android:layout_width="0dp"  android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
         android:textColor="@color/dark"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/songImageID"
+        tools:text="Nome Canzone Molto Lunga Che Va Su Due Linee" />
 
     <TextView
         android:id="@+id/songArtistID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
+        android:layout_width="0dp"  android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/gray"
-        android:textSize="12sp" />
+        android:textAlignment="center"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/songTitleID"
+        tools:text="Artista Molto Famoso" />
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
