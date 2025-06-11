@@ -494,7 +494,7 @@ class UserRepository @Inject constructor(
             try {
                 val globalStatsDocs = globalSongsCollection
                     .orderBy("totalFavoriteCount", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                    .limit(10)
+                    .limit(25)
                     .get().await().documents
 
                 val songIds = globalStatsDocs.mapNotNull { it.id }
@@ -521,8 +521,8 @@ class UserRepository @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val globalStatsDocs = globalSongsCollection
-                    .orderBy("avgScore", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                    .limit(10)
+                    .orderBy("totalRatedCount", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                    .limit(25)
                     .get().await().documents
 
                 val songIds = globalStatsDocs.mapNotNull { it.id }

@@ -13,7 +13,6 @@ import com.tunagold.oceantunes.model.Song
 import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
 import com.tunagold.oceantunes.utils.Result
 import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
-// Import the generated Safe Args directions
 import com.tunagold.oceantunes.ui.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,7 +24,6 @@ class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeViewModel by viewModels()
 
-    // Declare adapters as member variables to initialize once
     private lateinit var nowSongsAdapter: CarouselAdapter<Song>
     private lateinit var recommendedSongsAdapter: CarouselAdapter<Song>
 
@@ -41,29 +39,25 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize adapters here once with empty lists
         nowSongsAdapter = CarouselAdapter<Song>(emptyList()) { item ->
-            val clickedSong = item.third // item.third is now directly of type Song
+            val clickedSong = item.third
             showSongDialog(clickedSong)
         }
         recommendedSongsAdapter = CarouselAdapter<Song>(emptyList()) { item ->
-            val clickedSong = item.third // item.third is now directly of type Song
+            val clickedSong = item.third
             showSongDialog(clickedSong)
         }
 
-        // Set the adapters to the RecyclerViews
         binding.carouselNowSongs.adapter = nowSongsAdapter
         binding.carouselRecommended.adapter = recommendedSongsAdapter
 
-
         observeViewModel()
 
-        // --- MODIFIED NAVIGATION CALLS ---
         binding.nowMoreButton.setOnClickListener {
             val nowPlayingSongsList = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
             val action = HomeFragmentDirections.actionHomeFragmentToSongsGridFragment(
-                songsListKey = nowPlayingSongsList.toTypedArray(), // Pass as array
-                titleKey = getString(R.string.now_playing_title) // Define a string resource for title
+                songsListKey = nowPlayingSongsList.toTypedArray(),
+                titleKey = getString(R.string.now_playing_title)
             )
             findNavController().navigate(action)
         }
@@ -71,12 +65,11 @@ class HomeFragment : Fragment() {
         binding.recommendedMoreButton.setOnClickListener {
             val recommendedSongsList = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
             val action = HomeFragmentDirections.actionHomeFragmentToSongsGridFragment(
-                songsListKey = recommendedSongsList.toTypedArray(), // Pass as array
-                titleKey = getString(R.string.recommended_title) // Define a string resource for title
+                songsListKey = recommendedSongsList.toTypedArray(),
+                titleKey = getString(R.string.recommended_title)
             )
             findNavController().navigate(action)
         }
-        // --- END MODIFIED NAVIGATION CALLS ---
 
         homeViewModel.fetchTopFavoriteSongs()
         homeViewModel.fetchTopRatedSongs()
@@ -85,23 +78,17 @@ class HomeFragment : Fragment() {
     private fun observeViewModel() {
         homeViewModel.topFavoriteSongs.observe(viewLifecycleOwner) { result ->
             if (result is Result.Success) {
-                val currentNowPlayingSongs = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
-                setupCarousels(nowPlaying = currentNowPlayingSongs, recommended = result.data ?: emptyList())
+                setupCarousels(nowPlaying = result.data ?: emptyList(), recommended = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList())
             } else if (result is Result.Error) {
-                // Handle error or show toast
-                val currentNowPlayingSongs = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
-                setupCarousels(nowPlaying = currentNowPlayingSongs, recommended = emptyList())
+                setupCarousels(nowPlaying = emptyList(), recommended = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList())
             }
         }
 
         homeViewModel.topRatedSongs.observe(viewLifecycleOwner) { result ->
             if (result is Result.Success) {
-                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
-                setupCarousels(nowPlaying = result.data ?: emptyList(), recommended = currentRecommendedSongs)
+                setupCarousels(nowPlaying = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList(), recommended = result.data ?: emptyList())
             } else if (result is Result.Error) {
-                // Handle error or show toast
-                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
-                setupCarousels(nowPlaying = emptyList(), recommended = currentRecommendedSongs)
+                setupCarousels(nowPlaying = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList(), recommended = emptyList())
             }
         }
     }
