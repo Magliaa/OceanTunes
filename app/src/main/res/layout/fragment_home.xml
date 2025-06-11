@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,7 +11,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="80dp"  tools:context=".ui.home.HomeFragment">
+        android:paddingBottom="80dp"
+        tools:context=".ui.home.HomeFragment">
 
         <TextView
             android:id="@+id/titleText"
@@ -38,6 +40,17 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp" />
+
+        <!-- ProgressBar per carouselNowSongs -->
+        <ProgressBar
+            android:id="@+id/progressBarNowSongs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/carouselNowSongs"
+            app:layout_constraintBottom_toBottomOf="@id/carouselNowSongs"
+            app:layout_constraintStart_toStartOf="@id/carouselNowSongs"
+            app:layout_constraintEnd_toEndOf="@id/carouselNowSongs" />
 
         <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
             android:id="@+id/carouselNowSongs"
@@ -76,6 +89,17 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="24dp"
             android:layout_marginStart="16dp" />
+
+        <!-- ProgressBar per carouselRecommended -->
+        <ProgressBar
+            android:id="@+id/progressBarRecommended"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/carouselRecommended"
+            app:layout_constraintBottom_toBottomOf="@id/carouselRecommended"
+            app:layout_constraintStart_toStartOf="@id/carouselRecommended"
+            app:layout_constraintEnd_toEndOf="@id/carouselRecommended" />
 
         <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
             android:id="@+id/carouselRecommended"

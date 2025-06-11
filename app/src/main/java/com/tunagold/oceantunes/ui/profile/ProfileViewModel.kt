@@ -36,6 +36,12 @@ class ProfileViewModel @Inject constructor(
     private val _ratedSongs = MutableLiveData<Result<List<Song>>>()
     val ratedSongs: LiveData<Result<List<Song>>> = _ratedSongs
 
+    private val _isLoadingFavoriteSongs = MutableLiveData<Boolean>(false)
+    val isLoadingFavoriteSongs: LiveData<Boolean> = _isLoadingFavoriteSongs
+
+    private val _isLoadingRatedSongs = MutableLiveData<Boolean>(false)
+    val isLoadingRatedSongs: LiveData<Boolean> = _isLoadingRatedSongs
+
     fun fetchCurrentUserDetails() {
         _currentUser.value = Result.Loading
         viewModelScope.launch {
@@ -55,19 +61,39 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun fetchFavoriteSongs() {
-        _favoriteSongs.value = Result.Loading
+        _isLoadingFavoriteSongs.value = true
         viewModelScope.launch {
             userRepository.getFavoriteSongsForUser().observeForever { result ->
-                _favoriteSongs.value = result
+                when (result) {
+                    is Result.Loading -> {}
+                    is Result.Success -> {
+                        _favoriteSongs.value = result
+                        _isLoadingFavoriteSongs.value = false
+                    }
+                    is Result.Error -> {
+                        _favoriteSongs.value = result
+                        _isLoadingFavoriteSongs.value = false
+                    }
+                }
             }
         }
     }
 
     fun fetchRatedSongs() {
-        _ratedSongs.value = Result.Loading
+        _isLoadingRatedSongs.value = true
         viewModelScope.launch {
             userRepository.getUserRatedSongs().observeForever { result ->
-                _ratedSongs.value = result
+                when (result) {
+                    is Result.Loading -> {}
+                    is Result.Success -> {
+                        _ratedSongs.value = result
+                        _isLoadingRatedSongs.value = false
+                    }
+                    is Result.Error -> {
+                        _ratedSongs.value = result
+                        _isLoadingRatedSongs.value = false
+                    }
+                }
             }
         }
     }

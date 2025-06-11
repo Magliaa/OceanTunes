@@ -1,6 +1,7 @@
 package com.tunagold.oceantunes.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,10 @@ class HomeFragment : Fragment() {
     private lateinit var nowSongsAdapter: CarouselAdapter<Song>
     private lateinit var recommendedSongsAdapter: CarouselAdapter<Song>
 
+    // Variabili di stato locali per tenere traccia dei dati correnti delle canzoni
+    private var currentTopFavoriteSongs: List<Song> = emptyList()
+    private var currentTopRatedSongs: List<Song> = emptyList()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,6 +43,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("HomeFragment", "onViewCreated called.")
 
         nowSongsAdapter = CarouselAdapter<Song>(emptyList()) { item ->
             val clickedSong = item.third
@@ -51,59 +57,116 @@ class HomeFragment : Fragment() {
         binding.carouselNowSongs.adapter = nowSongsAdapter
         binding.carouselRecommended.adapter = recommendedSongsAdapter
 
-        observeViewModel()
+        observeViewModel() // Imposta gli osservatori per i dati e gli stati di caricamento
 
         binding.nowMoreButton.setOnClickListener {
-            val nowPlayingSongsList = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
             val action = HomeFragmentDirections.actionHomeFragmentToSongsGridFragment(
-                songsListKey = nowPlayingSongsList.toTypedArray(),
+                songsListKey = currentTopFavoriteSongs.toTypedArray(),
                 titleKey = getString(R.string.now_playing_title)
             )
             findNavController().navigate(action)
         }
 
         binding.recommendedMoreButton.setOnClickListener {
-            val recommendedSongsList = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
             val action = HomeFragmentDirections.actionHomeFragmentToSongsGridFragment(
-                songsListKey = recommendedSongsList.toTypedArray(),
+                songsListKey = currentTopRatedSongs.toTypedArray(),
                 titleKey = getString(R.string.recommended_title)
             )
             findNavController().navigate(action)
         }
-
-        homeViewModel.fetchTopFavoriteSongs()
-        homeViewModel.fetchTopRatedSongs()
     }
 
     private fun observeViewModel() {
+        Log.d("HomeFragment", "observeViewModel called.")
+
+        // Osserva i brani preferiti
         homeViewModel.topFavoriteSongs.observe(viewLifecycleOwner) { result ->
-            if (result is Result.Success) {
-                setupCarousels(nowPlaying = result.data ?: emptyList(), recommended = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList())
-            } else if (result is Result.Error) {
-                setupCarousels(nowPlaying = emptyList(), recommended = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList())
+            Log.d("HomeFragment", "topFavoriteSongs observer triggered: $result")
+            when (result) {
+                is Result.Success -> {
+                    currentTopFavoriteSongs = result.data ?: emptyList()
+                    Log.d("HomeFragment", "topFavoriteSongs success, size: ${currentTopFavoriteSongs.size}")
+                }
+                is Result.Error -> {
+                    currentTopFavoriteSongs = emptyList()
+                    Log.e("HomeFragment", "topFavoriteSongs error: ${result.exception?.message}")
+                    // Puoi mostrare un messaggio di errore all'utente qui
+                }
+                else -> {}
             }
+            setupCarousels(nowPlaying = currentTopFavoriteSongs, recommended = currentTopRatedSongs)
         }
 
+        // Osserva i brani più votati
         homeViewModel.topRatedSongs.observe(viewLifecycleOwner) { result ->
-            if (result is Result.Success) {
-                setupCarousels(nowPlaying = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList(), recommended = result.data ?: emptyList())
-            } else if (result is Result.Error) {
-                setupCarousels(nowPlaying = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList(), recommended = emptyList())
+            Log.d("HomeFragment", "topRatedSongs observer triggered: $result")
+            when (result) {
+                is Result.Success -> {
+                    currentTopRatedSongs = result.data ?: emptyList()
+                    Log.d("HomeFragment", "topRatedSongs success, size: ${currentTopRatedSongs.size}")
+                }
+                is Result.Error -> {
+                    currentTopRatedSongs = emptyList()
+                    Log.e("HomeFragment", "topRatedSongs error: ${result.exception?.message}")
+                    // Puoi mostrare un messaggio di errore all'utente qui
+                }
+                else -> {}
             }
+            setupCarousels(nowPlaying = currentTopFavoriteSongs, recommended = currentTopRatedSongs)
+        }
+
+        // Osserva lo stato di caricamento per i brani preferiti
+        homeViewModel.isLoadingTopFavoriteSongs.observe(viewLifecycleOwner) { isLoading ->
+            Log.d("HomeFragment", "isLoadingTopFavoriteSongs: $isLoading")
+            if (isLoading) {
+                binding.progressBarNowSongs.visibility = View.VISIBLE
+                binding.carouselNowSongs.visibility = View.GONE
+            } else {
+                binding.progressBarNowSongs.visibility = View.GONE
+                // Applica l'animazione di fade-in
+                binding.carouselNowSongs.alpha = 0f // Inizia con trasparenza
+                binding.carouselNowSongs.visibility = View.VISIBLE
+                binding.carouselNowSongs.animate()
+                    .alpha(1f) // Anima a opacità completa
+                    .setDuration(300) // Durata dell'animazione in ms
+                    .start()
+            }
+            Log.d("HomeFragment", "progressBarNowSongs visibility: ${binding.progressBarNowSongs.visibility}, carouselNowSongs visibility: ${binding.carouselNowSongs.visibility}")
+        }
+
+        // Osserva lo stato di caricamento per i brani più votati
+        homeViewModel.isLoadingTopRatedSongs.observe(viewLifecycleOwner) { isLoading ->
+            Log.d("HomeFragment", "isLoadingTopRatedSongs: $isLoading")
+            if (isLoading) {
+                binding.progressBarRecommended.visibility = View.VISIBLE
+                binding.carouselRecommended.visibility = View.GONE
+            } else {
+                binding.progressBarRecommended.visibility = View.GONE
+                // Applica l'animazione di fade-in
+                binding.carouselRecommended.alpha = 0f // Inizia con trasparenza
+                binding.carouselRecommended.visibility = View.VISIBLE
+                binding.carouselRecommended.animate()
+                    .alpha(1f) // Anima a opacità completa
+                    .setDuration(300) // Durata dell'animazione in ms
+                    .start()
+            }
+            Log.d("HomeFragment", "progressBarRecommended visibility: ${binding.progressBarRecommended.visibility}, carouselRecommended visibility: ${binding.carouselRecommended.visibility}")
         }
     }
 
     private fun setupCarousels(nowPlaying: List<Song>, recommended: List<Song>) {
+        Log.d("HomeFragment", "setupCarousels called. Now Playing size: ${nowPlaying.size}, Recommended size: ${recommended.size}")
         val nowPlayingDataForCarousel: List<Triple<String, String, Song>> = nowPlaying.map { song ->
             Triple(song.title, song.artists.joinToString(", "), song)
         }
+        nowSongsAdapter.updateData(nowPlayingDataForCarousel)
+        Log.d("HomeFragment", "nowSongsAdapter updated with size: ${nowPlayingDataForCarousel.size}")
 
         val recommendedDataForCarousel: List<Triple<String, String, Song>> = recommended.map { song ->
             Triple(song.title, song.artists.joinToString(", "), song)
         }
-
-        nowSongsAdapter.updateData(nowPlayingDataForCarousel)
         recommendedSongsAdapter.updateData(recommendedDataForCarousel)
+        Log.d("HomeFragment", "recommendedSongsAdapter updated with size: ${recommendedDataForCarousel.size}")
     }
 
     private fun showSongDialog(song: Song) {

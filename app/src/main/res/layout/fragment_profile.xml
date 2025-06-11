@@ -17,14 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:paddingBottom="80dp"> <ImageView
-            android:id="@+id/profileImage"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="24dp"
-            android:src="@drawable/ic_profile_avatar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:paddingBottom="80dp">
+
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/ic_profile_avatar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/profileName"
@@ -77,16 +79,29 @@
                 app:layout_constraintTop_toBottomOf="@id/dataBox"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <!-- ProgressBar per carouselFavorites -->
+            <ProgressBar
+                android:id="@+id/progressBarFavorites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/carouselFavorites"
+                app:layout_constraintBottom_toBottomOf="@id/carouselFavorites"
+                app:layout_constraintStart_toStartOf="@id/carouselFavorites"
+                app:layout_constraintEnd_toEndOf="@id/carouselFavorites" />
+
             <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
                 android:id="@+id/carouselFavorites"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="150dp"
                 app:itemSpacing="8dp"
                 app:layout_constraintTop_toBottomOf="@id/favoriteLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp" />
 
             <com.tunagold.oceantunes.ui.components.MaterialButton
                 android:id="@+id/seeAllFavorites"
@@ -124,16 +139,29 @@
                 app:layout_constraintTop_toBottomOf="@id/divider1"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <!-- ProgressBar per carouselRated -->
+            <ProgressBar
+                android:id="@+id/progressBarRated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/carouselRated"
+                app:layout_constraintBottom_toBottomOf="@id/carouselRated"
+                app:layout_constraintStart_toStartOf="@id/carouselRated"
+                app:layout_constraintEnd_toEndOf="@id/carouselRated" />
+
             <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
                 android:id="@+id/carouselRated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="150dp"
                 app:itemSpacing="8dp"
                 app:layout_constraintTop_toBottomOf="@id/ratedSongsLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp" />
 
             <com.tunagold.oceantunes.ui.components.MaterialButton
                 android:id="@+id/seeAllRated"

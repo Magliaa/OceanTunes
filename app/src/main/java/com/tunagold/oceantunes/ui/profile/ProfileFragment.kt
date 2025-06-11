@@ -1,7 +1,7 @@
 package com.tunagold.oceantunes.ui.profile
 
 import android.annotation.SuppressLint
-import android.content.Intent // Import for Intent
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,8 +21,7 @@ import com.tunagold.oceantunes.utils.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
 import com.tunagold.oceantunes.model.Song
 import com.tunagold.oceantunes.utils.Result
-import com.tunagold.oceantunes.ui.auth.AuthActivity // Make sure to import your AuthActivity
-// Import the generated Safe Args directions
+import com.tunagold.oceantunes.ui.auth.AuthActivity
 import com.tunagold.oceantunes.ui.profile.ProfileFragmentDirections
 
 
@@ -85,8 +84,8 @@ class ProfileFragment : Fragment() {
         binding.seeAllFavorites.setOnClickListener {
             val favoriteSongsList = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
             val action = ProfileFragmentDirections.actionNavigationProfileToSongsGridFragment(
-                songsListKey = favoriteSongsList.toTypedArray(), // Pass as array
-                titleKey = getString(R.string.favorites_title) // Define a string resource for title
+                songsListKey = favoriteSongsList.toTypedArray(),
+                titleKey = getString(R.string.favorites_title)
             )
             findNavController().navigate(action)
         }
@@ -94,12 +93,11 @@ class ProfileFragment : Fragment() {
         binding.seeAllRated.setOnClickListener {
             val ratedSongsList = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
             val action = ProfileFragmentDirections.actionNavigationProfileToSongsGridFragment(
-                songsListKey = ratedSongsList.toTypedArray(), // Pass as array
-                titleKey = getString(R.string.rated_songs_title) // Define a string resource for title
+                songsListKey = ratedSongsList.toTypedArray(),
+                titleKey = getString(R.string.rated_songs_title)
             )
             findNavController().navigate(action)
         }
-        // --- END MODIFIED NAVIGATION CALLS ---
 
         favoritesAdapter = CarouselAdapter<Song>(emptyList()) { item ->
             val clickedSong = item.third
@@ -167,7 +165,7 @@ class ProfileFragment : Fragment() {
                 is Result.Success -> {
                     toastHelper.showShort("Disconnessione effettuata con successo!")
 
-                     navigateToAuthAndClearBackStack()
+                    navigateToAuthAndClearBackStack()
                 }
                 is Result.Error -> {
                     toastHelper.showShort("Errore disconnessione: ${result.exception.message}")
@@ -201,7 +199,6 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.favoriteSongs.observe(viewLifecycleOwner) { result ->
-
             if (result is Result.Success) {
                 val currentRatedSongs = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
                 setupCarousels(favorites = result.data ?: emptyList(), rated = currentRatedSongs)
@@ -213,7 +210,6 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.ratedSongs.observe(viewLifecycleOwner) { result ->
-
             if (result is Result.Success) {
                 val currentFavoriteSongs = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
                 setupCarousels(favorites = currentFavoriteSongs, rated = result.data ?: emptyList())
@@ -221,6 +217,36 @@ class ProfileFragment : Fragment() {
                 toastHelper.showShort("Errore caricamento canzoni valutate: ${result.exception.message}")
                 val currentFavoriteSongs = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
                 setupCarousels(favorites = currentFavoriteSongs, rated = emptyList())
+            }
+        }
+
+        profileViewModel.isLoadingFavoriteSongs.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.progressBarFavorites.visibility = View.VISIBLE
+                binding.carouselFavorites.visibility = View.GONE
+            } else {
+                binding.progressBarFavorites.visibility = View.GONE
+                binding.carouselFavorites.alpha = 0f
+                binding.carouselFavorites.visibility = View.VISIBLE
+                binding.carouselFavorites.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .start()
+            }
+        }
+
+        profileViewModel.isLoadingRatedSongs.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.progressBarRated.visibility = View.VISIBLE
+                binding.carouselRated.visibility = View.GONE
+            } else {
+                binding.progressBarRated.visibility = View.GONE
+                binding.carouselRated.alpha = 0f
+                binding.carouselRated.visibility = View.VISIBLE
+                binding.carouselRated.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .start()
             }
         }
     }
@@ -244,7 +270,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun animateFadeOutThenNavigate(view: View, destinationId: Int) {
-
         view.animate().alpha(0f).setDuration(300).withEndAction {
             findNavController().navigate(destinationId)
             view.alpha = 1f
@@ -275,10 +300,9 @@ class ProfileFragment : Fragment() {
     }
 
     private fun navigateToAuthAndClearBackStack() {
-        val intent = Intent(requireActivity(), AuthActivity::class.java) // Replace AuthActivity with your actual authentication Activity
+        val intent = Intent(requireActivity(), AuthActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         requireActivity().finish()
     }
-
 }
