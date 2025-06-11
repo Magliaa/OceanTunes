@@ -7,7 +7,6 @@
     android:padding="16dp"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:background="@color/white"
     tools:context=".MainActivity">
 
     <!-- Guideline superiore -->
@@ -116,17 +115,17 @@
     <!-- Registrati -->
     <com.tunagold.oceantunes.ui.components.MaterialButton
         android:id="@+id/registerButton"
-        android:layout_width="120dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/passwordConfirmInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.6"
         app:buttonColor="@color/purple3"
-        android:minHeight="48dp"
+        android:minHeight="56dp"
         app:buttonText="@string/register_button"
         android:textColor="@color/white"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:textSize="18sp" />
 
     <!-- Accedi -->
@@ -184,18 +183,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="32dp">
 
         <!-- Google Button -->
         <com.tunagold.oceantunes.ui.components.MaterialFAB
-            android:layout_marginStart="30dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Login with google"
+            android:scaleType="centerInside"
             android:scaleX="1.2"
             android:scaleY="1.2"
             app:icon="@drawable/ic_google_logo"
-            android:scaleType="centerInside"
             tools:ignore="HardcodedText" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

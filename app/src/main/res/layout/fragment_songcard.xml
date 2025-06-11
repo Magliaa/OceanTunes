@@ -8,6 +8,19 @@
     android:clickable="true"
     android:focusable="true">
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/songImageID2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_close"
+        app:layout_constraintWidth_percent="0.5"
+        app:srcCompat="@drawable/unknown_song_img" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/song_card_complex"
         android:layout_width="match_parent"
@@ -21,13 +34,13 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:padding="16dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/song_card_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
                 android:background="@drawable/bg_card_rounded">
 
                 <!-- Close Button -->
@@ -41,17 +54,19 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- Song Image (Directly placed, replacing SongSummary's image) -->
+                <!-- Song Image -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/songImageID"
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:layout_marginTop="16dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/unknown_song_img"
                     app:layout_constraintTop_toBottomOf="@id/btn_close"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintWidth_percent="0.6"
+                    app:srcCompat="@drawable/unknown_song_img" />
 
                 <!-- Song Title (Directly placed, replacing SongSummary's title) -->
                 <TextView
@@ -66,7 +81,7 @@
                     app:layout_constraintTop_toBottomOf="@id/songImageID"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:ellipsize="end"
                     android:text="Song Title" />
 
@@ -97,7 +112,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/songArtistID" />
 
-                <!-- Slider + Heart -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/slider_row"
                     android:layout_width="0dp"
@@ -106,14 +120,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="8dp"
-                    android:paddingStart="72dp"
-                    android:paddingEnd="72dp">
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
 
+                    <!-- Stelle -->
                     <com.tunagold.oceantunes.ui.components.MaterialRating
                         android:id="@+id/stars_rating"
                         style="@style/Widget.AppCompat.RatingBar.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="36dp"
                         android:scaleX="2"
                         android:scaleY="2"
                         android:contentDescription="@string/vota"
@@ -127,10 +143,12 @@
                         android:secondaryProgressTint="@color/purple3"
                         android:progressTintMode="src_in"/>
 
+                    <!-- Cuore (a destra delle stelle) -->
                     <ImageButton
                         android:id="@+id/btn_like"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:layout_marginStart="56dp"
                         android:background="@drawable/bg_button_heart"
                         android:contentDescription="@string/aggiungi_ai_preferiti"
                         android:padding="8dp"
@@ -139,10 +157,11 @@
                         app:tint="@color/white"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/stars_rating"
-                        android:layout_marginStart="16dp" />
+                        app:layout_constraintEnd_toEndOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
                 <!-- DataBox -->
                 <com.tunagold.oceantunes.ui.components.DataBox
@@ -155,11 +174,11 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:is3Segments="true"
                     app:title1="Punteggio"
-                    app:val1="9"
+                    app:val1="1"
                     app:title2="Ranking"
-                    app:val2="452"
+                    app:val2="1"
                     app:title3="Preferiti"
-                    app:val3="3925" />
+                    app:val3="1" />
 
                 <!-- Album TextView -->
                 <TextView

@@ -1,5 +1,6 @@
 package com.tunagold.oceantunes.ui.login
 
+import android.app.PendingIntent
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,14 +25,14 @@ class LoginViewModel @Inject constructor(
     private val _googleSignInResult = MutableLiveData<Result<String>>()
     val googleSignInResult: LiveData<Result<String>> = _googleSignInResult
 
-    private val _googleSignInIntentSenderRequest = MutableLiveData<Intent>()
-    val googleSignInIntentSenderRequest: LiveData<Intent> = _googleSignInIntentSenderRequest
+    private val _googleSignInIntentSenderRequest = MutableLiveData<PendingIntent>()
+    val googleSignInIntentSenderRequest: LiveData<PendingIntent> = _googleSignInIntentSenderRequest
 
     fun signIn(email: String, password: String) {
         _signInResult.value = Result.Loading
         viewModelScope.launch {
-            userRepository.signIn(email, password).observeForever {
-                _signInResult.value = it
+            userRepository.signIn(email, password).observeForever { result ->
+                _signInResult.value = result
             }
         }
     }
@@ -41,7 +42,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val signInResult = googleAuthHelper.beginSignIn()
-                //_googleSignInIntentSenderRequest.value = signInResult.pendingIntent.intent
+                _googleSignInIntentSenderRequest.value = signInResult.pendingIntent
             } catch (e: Exception) {
                 _googleSignInResult.value = Result.Error(e)
             }
@@ -53,9 +54,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             when (val authResult = googleAuthHelper.handleSignInResult(data)) {
                 is GoogleAuthHelper.AuthResult.Success -> {
-                    /*userRepository.signInWithGoogle(authResult.idToken).observeForever {
-                        _googleSignInResult.value = it
-                    }*/
+                    _googleSignInResult.value = Result.Success("Autenticazione Google/Firebase completata")
                 }
                 is GoogleAuthHelper.AuthResult.Failure -> {
                     _googleSignInResult.value = Result.Error(authResult.exception)

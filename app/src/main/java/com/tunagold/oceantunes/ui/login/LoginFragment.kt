@@ -1,7 +1,7 @@
 package com.tunagold.oceantunes.ui.login
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,6 +86,7 @@ class LoginFragment : Fragment() {
                     findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
                 }
                 is Result.Error -> {
+                    Log.e("LoginFragment", "Accesso fallito: ${result.exception.message}")
                     toastHelper.showShort("Accesso fallito: ${result.exception.message}")
                 }
             }
@@ -100,14 +101,16 @@ class LoginFragment : Fragment() {
                     findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
                 }
                 is Result.Error -> {
+                    Log.e("LoginFragment", "Accesso fallito: ${result.exception.message}")
                     toastHelper.showShort("Accesso fallito: ${result.exception.message}")
                 }
             }
         }
 
-        loginViewModel.googleSignInIntentSenderRequest.observe(viewLifecycleOwner) { intent ->
-            //val intentSenderRequest = IntentSenderRequest.Builder(intent.intentSender).build()
-            //googleSignInLauncher.launch(intentSenderRequest)
+        loginViewModel.googleSignInIntentSenderRequest.observe(viewLifecycleOwner) { pendingIntent ->
+            val intentSender = pendingIntent.intentSender
+            val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
+            googleSignInLauncher.launch(intentSenderRequest)
         }
     }
 

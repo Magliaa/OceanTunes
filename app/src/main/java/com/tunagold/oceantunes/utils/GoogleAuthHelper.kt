@@ -28,7 +28,7 @@ class GoogleAuthHelper(private val context: Context) {
                 ?: throw Exception("Google ID token non disponibile")
 
             val firebaseCredential = GoogleAuthProvider.getCredential(googleIdToken, null)
-            auth.signInWithCredential(firebaseCredential).await()
+            auth.signInWithCredential(firebaseCredential).await() // Questa riga gestisce la persistenza di Firebase
             AuthResult.Success
         } catch (e: ApiException) {
             AuthResult.Failure(e)

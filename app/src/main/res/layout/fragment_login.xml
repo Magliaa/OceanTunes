@@ -7,7 +7,6 @@
     android:padding="16dp"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:background="@color/white"
     tools:context=".MainActivity">
 
     <!-- Guideline superiore -->
@@ -22,9 +21,11 @@
         android:id="@+id/bottomGuideline"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintGuide_percent="0.9" />
+        app:layout_constraintGuide_begin="357dp" />
 
     <!-- Logo -->
+
+    <!-- Username -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="314dp"
@@ -32,13 +33,13 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/logo_desc"
         android:src="@drawable/ic_logo_oceantunes"
-        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.2"
-        app:layout_constraintTop_toTopOf="@id/topGuideline"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/topGuideline"
+        app:layout_constraintWidth_percent="0.5" />
 
-    <!-- Username -->
     <com.tunagold.oceantunes.ui.components.MaterialTextInput
         android:id="@+id/usernameInput"
         android:layout_width="0dp"
@@ -80,33 +81,19 @@
             android:textColorHint="@color/dark" />
     </com.tunagold.oceantunes.ui.components.MaterialTextInput>
 
-    <!-- Checkbox Ricordami -->
-    <CheckBox
-        android:id="@+id/rememberMeCheckBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/passwordInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        android:minHeight="48dp"
-        android:text="@string/remember_me"
-        android:textColor="@color/dark"
-        android:textSize="16sp" />
 
     <!-- Pulsante Accedi -->
     <com.tunagold.oceantunes.ui.components.MaterialButton
         android:id="@+id/loginButton"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/rememberMeCheckBox"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/passwordInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.6"
         app:buttonColor="@color/purple3"
-        android:minHeight="48dp"
+        android:minHeight="56dp"
         app:buttonText="@string/login_button"
         android:textColor="@color/white"
         android:textSize="18sp" />
@@ -137,8 +124,7 @@
         android:textColor="@color/purple3"
         android:textSize="14sp"
         android:clickable="true"
-        android:focusable="true"
-        />
+        android:focusable="true" />
 
 
 
@@ -182,14 +168,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="32dp">
 
         <!-- Google Button -->
         <com.tunagold.oceantunes.ui.components.MaterialFAB
             android:id="@+id/signInWithGoogle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="30dp"
             android:contentDescription="Login with google"
             android:scaleType="centerInside"
             android:scaleX="1.2"
