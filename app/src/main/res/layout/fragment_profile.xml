@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.ProfileFragment">
 
-    <!-- Scrollable content -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContainer"
         android:layout_width="match_parent"
@@ -17,9 +16,9 @@
             android:id="@+id/contentLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:paddingBottom="80dp">
 
-            <!-- Profile Image -->
             <ImageView
                 android:id="@+id/profileImage"
                 android:layout_width="64dp"
@@ -29,12 +28,11 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Username -->
             <TextView
                 android:id="@+id/profileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mario Rossi"
+                android:text="Nome Utente"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginStart="16dp"
@@ -42,7 +40,6 @@
                 app:layout_constraintTop_toTopOf="@id/profileImage"
                 app:layout_constraintBottom_toBottomOf="@id/profileImage" />
 
-            <!-- Elipses inside scrollable area -->
             <com.tunagold.oceantunes.ui.components.Elipses
                 android:id="@+id/elipsesButton"
                 android:layout_width="32dp"
@@ -56,21 +53,19 @@
                 app:layout_constraintBottom_toBottomOf="@id/profileName"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- DataBox -->
             <com.tunagold.oceantunes.ui.components.DataBox
                 android:id="@+id/dataBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 app:title1="Preferiti"
-                app:val1="123"
+                app:val1="7"
                 app:title2="Valutate"
-                app:val2="321"
+                app:val2="6"
                 app:layout_constraintTop_toBottomOf="@id/profileImage"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Preferiti label -->
             <TextView
                 android:id="@+id/favoriteLabel"
                 android:layout_width="wrap_content"
@@ -84,19 +79,30 @@
                 app:layout_constraintTop_toBottomOf="@id/dataBox"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Carousel Preferiti -->
+            <!-- ProgressBar per carouselFavorites -->
+            <ProgressBar
+                android:id="@+id/progressBarFavorites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/carouselFavorites"
+                app:layout_constraintBottom_toBottomOf="@id/carouselFavorites"
+                app:layout_constraintStart_toStartOf="@id/carouselFavorites"
+                app:layout_constraintEnd_toEndOf="@id/carouselFavorites" />
+
             <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
                 android:id="@+id/carouselFavorites"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="150dp"
                 app:itemSpacing="8dp"
                 app:layout_constraintTop_toBottomOf="@id/favoriteLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp" />
 
-            <!-- Button Scopri Tutto Preferiti -->
             <com.tunagold.oceantunes.ui.components.MaterialButton
                 android:id="@+id/seeAllFavorites"
                 android:layout_width="wrap_content"
@@ -110,7 +116,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="16dp" />
 
-            <!-- Divider -->
             <com.tunagold.oceantunes.ui.components.MaterialDivider
                 android:id="@+id/divider1"
                 android:layout_width="match_parent"
@@ -121,7 +126,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Canzoni Valutate -->
             <TextView
                 android:id="@+id/ratedSongsLabel"
                 android:layout_width="wrap_content"
@@ -135,19 +139,30 @@
                 app:layout_constraintTop_toBottomOf="@id/divider1"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Carousel Valutate -->
+            <!-- ProgressBar per carouselRated -->
+            <ProgressBar
+                android:id="@+id/progressBarRated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/carouselRated"
+                app:layout_constraintBottom_toBottomOf="@id/carouselRated"
+                app:layout_constraintStart_toStartOf="@id/carouselRated"
+                app:layout_constraintEnd_toEndOf="@id/carouselRated" />
+
             <com.tunagold.oceantunes.ui.components.carousel.MaterialCarousel
                 android:id="@+id/carouselRated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="150dp"
                 app:itemSpacing="8dp"
                 app:layout_constraintTop_toBottomOf="@id/ratedSongsLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp" />
 
-            <!-- Button Scopri Tutto Valutate -->
             <com.tunagold.oceantunes.ui.components.MaterialButton
                 android:id="@+id/seeAllRated"
                 android:layout_width="wrap_content"
@@ -161,7 +176,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="16dp" />
 
-            <!-- Divider -->
             <com.tunagold.oceantunes.ui.components.MaterialDivider
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
@@ -172,60 +186,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Generi preferiti -->
-            <TextView
-                android:id="@+id/genresLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="I tuoi generi preferiti"
-                android:textColor="@color/dark"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="16dp"
-                app:layout_constraintTop_toBottomOf="@id/divider2"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <!-- Lista Generi -->
-            <LinearLayout
-                android:id="@+id/favoriteGenresContainer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="16dp"
-                app:layout_constraintTop_toBottomOf="@id/genresLabel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <!-- Singoli Generi -->
-                <com.tunagold.oceantunes.ui.components.TopChartsSong
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:titlechartssong="Rock n' Roll"
-                    app:artistchartssong="34 canzoni"
-                    app:imgchartssong="@drawable/moon"
-                    android:layout_marginBottom="8dp" />
-
-                <com.tunagold.oceantunes.ui.components.TopChartsSong
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:titlechartssong="Pop"
-                    app:artistchartssong="28 canzoni"
-                    app:imgchartssong="@drawable/moon"
-                    android:layout_marginBottom="8dp" />
-
-                <com.tunagold.oceantunes.ui.components.TopChartsSong
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:titlechartssong="Hip Hop"
-                    app:artistchartssong="22 canzoni"
-                    app:imgchartssong="@drawable/moon"
-                    android:layout_marginBottom="56dp" />
-            </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
 
     <FrameLayout
         android:id="@+id/overlayContainer"
@@ -242,8 +204,6 @@
             android:visibility="gone"
             android:elevation="100dp"
             app:setting1="Modifica profilo"
-            app:setting2="Notifiche"
-            app:setting3="Termini e Condizioni"
             app:setting4="Esci" />
     </FrameLayout>
 

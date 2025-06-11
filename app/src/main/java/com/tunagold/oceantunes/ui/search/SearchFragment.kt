@@ -1,41 +1,32 @@
 package com.tunagold.oceantunes.ui.search
 
 import SpacingItemDecoration
-import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.edit
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentSearchBinding
 import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
 import com.tunagold.oceantunes.ui.songsgrid.SongsAdapter
+import com.tunagold.oceantunes.model.Song
+import com.tunagold.oceantunes.storage.room.SongRoom
+import com.tunagold.oceantunes.utils.Result
+import dagger.hilt.android.AndroidEntryPoint
+import android.util.Log
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: SongsAdapter
-    private val recentSongs = mutableListOf<Triple<String, String, Int>>()
-    private var isSearching = false
-    private val prefsKey = "recent_searches"
-    private val handler = Handler(Looper.getMainLooper())
-
-    // TODO: BACKEND - Rimuovi questo mock e usa i dati reali
-    private val dummySongs = listOf(
-        Triple("Blinding Lights", "The Weeknd", R.drawable.unknown_song_img),
-        Triple("Levitating", "Dua Lipa", R.drawable.unknown_song_img),
-        Triple("Save Your Tears", "The Weeknd", R.drawable.unknown_song_img),
-        Triple("Peaches", "Justin Bieber", R.drawable.unknown_song_img),
-        Triple("Montero", "Lil Nas X", R.drawable.unknown_song_img)
-    )
+    private val searchViewModel: SearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,136 +45,126 @@ class SearchFragment : Fragment() {
         binding.recyclerViewSongs.addItemDecoration(SpacingItemDecoration(spacingInPixels))
 
         adapter = SongsAdapter(emptyList()) { song ->
-            if (isSearching) {
-                val alreadyInRecent = recentSongs.any {
-                    it.first == song.first && it.second == song.second && it.third == song.third
-                }
-                if (!alreadyInRecent) {
-                    recentSongs.add(0, song)
-                    if (recentSongs.size > 10) recentSongs.removeLast()
-                    saveRecentSongs()
-                }
-                isSearching = false
-            }
-
+            Log.d("SongDebug", "SearchFragment: Song clicked. Type: ${song::class.java.name}, ID: ${song.id}")
+            searchViewModel.addRecentSearch(Triple(song.title, song.artists.joinToString(", "), song.image))
             val dialog = SongCardDialogFragment.newInstance(song)
             dialog.show(parentFragmentManager, "song_card")
         }
 
         binding.recyclerViewSongs.adapter = adapter
 
-        loadRecentSongs()
-        showRecentSearches()
+        setupSearchBarListeners()
+        setupClearRecentButton()
+        observeViewModel()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        updateUiState()
+    }
+
+    private fun setupSearchBarListeners() {
         binding.searchBar.onClearAction = {
-            isSearching = false
             binding.searchBar.editText?.setText("")
+            searchViewModel.searchSongs("")
         }
 
         binding.searchBar.editText?.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.searchBar.editText?.text.isNullOrEmpty()) {
-                isSearching = false
-                showRecentSearches()
+            val currentQueryIsEmpty = binding.searchBar.editText?.text.isNullOrEmpty()
+            if (hasFocus && currentQueryIsEmpty) {
+                searchViewModel.searchSongs("")
             }
         }
 
         binding.searchBar.editText?.addTextChangedListener { editable ->
-            val query = editable?.toString()?.trim().orEmpty()
+            val query = editable?.toString().orEmpty()
+            searchViewModel.searchSongs(query)
+        }
+    }
 
-            handler.removeCallbacksAndMessages(null)
+    private fun setupClearRecentButton() {
+        binding.clearRecentButton.setOnClickListener {
+            searchViewModel.clearRecentSearches()
+            searchViewModel.searchSongs("")
+        }
+    }
 
-            if (query.isEmpty()) {
-                isSearching = false
-                showRecentSearches()
-                return@addTextChangedListener
-            }
+    private fun observeViewModel() {
+        searchViewModel.isLoading.observe(viewLifecycleOwner) { updateUiState() }
+        searchViewModel.searchResults.observe(viewLifecycleOwner) { updateUiState() }
+        searchViewModel.recentSearches.observe(viewLifecycleOwner) { updateUiState() }
+        searchViewModel.noResultsMessage.observe(viewLifecycleOwner) { updateUiState() }
+    }
 
-            isSearching = true
+    private fun updateUiState() {
+        val isLoading = searchViewModel.isLoading.value ?: false
+        val currentQuery = binding.searchBar.editText?.text?.toString().orEmpty()
+        val searchResults = searchViewModel.searchResults.value
+        val recentSearches = searchViewModel.recentSearches.value.orEmpty()
+        val noResultsMessage = searchViewModel.noResultsMessage.value.orEmpty()
+        var recentOpen = true
+
+        binding.searchProgress.visibility = View.GONE
+        binding.recyclerViewSongs.visibility = View.GONE
+        binding.noResultsText.visibility = View.GONE
+        binding.recentSearchesLabel.visibility = View.GONE
+        binding.clearRecentButton.visibility = View.GONE
+
+        if (isLoading) {
             binding.searchProgress.fadeIn()
-
-            binding.recyclerViewSongs.fadeOut()
-            binding.noResultsText.fadeOut()
-            binding.recentSearchesLabel.fadeOut()
-            binding.clearRecentButton.fadeOut()
-
-            handler.postDelayed({
-                // TODO: BACKEND - Sostituire con chiamata API asincrona e parsing dei risultati
-                val filtered = dummySongs.filter {
-                    it.first.contains(query, ignoreCase = true) ||
-                            it.second.contains(query, ignoreCase = true)
+        } else {
+            if (currentQuery.isNotEmpty()) {
+                when (searchResults) {
+                    is Result.Success -> {
+                        val songs = searchResults.data
+                        if (songs.isNotEmpty()) {
+                            adapter.updateData(songs)
+                            binding.recyclerViewSongs.fadeIn()
+                        } else {
+                            binding.noResultsText.text = noResultsMessage.ifEmpty { "Nessun risultato trovato." }
+                            binding.noResultsText.fadeIn()
+                        }
+                    }
+                    is Result.Error -> {
+                        binding.noResultsText.text = noResultsMessage.ifEmpty { "Errore durante la ricerca." }
+                        binding.noResultsText.fadeIn()
+                    }
+                    is Result.Loading -> { }
+                    null -> { }
                 }
-
-                // TODO: BACKEND - Inserisci qui il callback per aggiornare l'adapter con i risultati veri
-                adapter.updateData(filtered)
-
-                binding.searchProgress.fadeOut()
-                if (filtered.isNotEmpty()) {
+            } else {
+                if (recentSearches.isNotEmpty() && recentOpen) {
+                    adapter.updateData(recentSearches.map { triple ->
+                        SongRoom(
+                            id = (triple.first + triple.second).hashCode().toString(),
+                            title = triple.first,
+                            artists = listOf(triple.second),
+                            album = "Unknown",
+                            image = triple.third,
+                            releaseDate = "Unknown",
+                            credits = emptyList()
+                        )
+                    })
                     binding.recyclerViewSongs.fadeIn()
+                    binding.recentSearchesLabel.fadeIn()
+                    binding.clearRecentButton.fadeIn()
+                    recentOpen = true
                 } else {
-                    binding.noResultsText.text = "Nessun risultato trovato"
+                    binding.noResultsText.text = "Nessuna ricerca recente."
                     binding.noResultsText.fadeIn()
                 }
-
-            }, 1000) // TODO: BACKEND - Rimuovere delay quando usi risultati reali
-        }
-
-        binding.clearRecentButton.setOnClickListener {
-            recentSongs.clear()
-            saveRecentSongs()
-            showRecentSearches()
-        }
-    }
-
-    private fun showRecentSearches() {
-        handler.removeCallbacksAndMessages(null)
-        binding.searchProgress.fadeOut()
-        if (recentSongs.isNotEmpty()) {
-            adapter.updateData(recentSongs)
-            binding.recyclerViewSongs.fadeIn()
-            binding.noResultsText.fadeOut()
-            binding.recentSearchesLabel.fadeIn()
-            binding.clearRecentButton.fadeIn()
-        } else {
-            adapter.updateData(emptyList())
-            binding.recyclerViewSongs.fadeOut()
-            binding.noResultsText.text = "Nessuna ricerca recente"
-            binding.noResultsText.fadeIn()
-            binding.recentSearchesLabel.fadeOut()
-            binding.clearRecentButton.fadeOut()
-        }
-    }
-
-    private fun saveRecentSongs() {
-        val prefs = requireContext().getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
-        val strings = recentSongs.map { "${it.first}|${it.second}|${it.third}" }.toSet()
-        prefs.edit {
-            putStringSet(prefsKey, strings)
-        }
-    }
-
-    private fun loadRecentSongs() {
-        val prefs = requireContext().getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
-        val strings = prefs.getStringSet(prefsKey, emptySet()) ?: emptySet()
-        recentSongs.clear()
-        strings.forEach { line ->
-            val parts = line.split("|")
-            if (parts.size == 3) {
-                val title = parts[0]
-                val artist = parts[1]
-                val imageRes = parts[2].toIntOrNull() ?: R.drawable.unknown_song_img
-                recentSongs.add(Triple(title, artist, imageRes))
             }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacksAndMessages(null)
         _binding = null
     }
 
     private fun View.fadeIn(duration: Long = 250) {
-        if (visibility != View.VISIBLE) {
+        this.clearAnimation()
+        if (visibility != View.VISIBLE || alpha < 1f) {
             alpha = 0f
             visibility = View.VISIBLE
             animate().alpha(1f).setDuration(duration).start()
@@ -191,7 +172,8 @@ class SearchFragment : Fragment() {
     }
 
     private fun View.fadeOut(duration: Long = 250) {
-        if (visibility == View.VISIBLE) {
+        this.clearAnimation()
+        if (visibility == View.VISIBLE || alpha > 0f) {
             animate().alpha(0f).setDuration(duration).withEndAction {
                 visibility = View.GONE
             }.start()

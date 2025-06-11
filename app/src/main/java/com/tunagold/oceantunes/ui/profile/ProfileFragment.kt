@@ -1,7 +1,9 @@
 package com.tunagold.oceantunes.ui.profile
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -9,22 +11,38 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentProfileBinding
 import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
 import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
-import android.content.Context
+import com.tunagold.oceantunes.utils.ToastHelper
+import dagger.hilt.android.AndroidEntryPoint
+import com.tunagold.oceantunes.model.Song
+import com.tunagold.oceantunes.utils.Result
+import com.tunagold.oceantunes.ui.auth.AuthActivity
+import com.tunagold.oceantunes.ui.profile.ProfileFragmentDirections
 
+
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var toastHelper: ToastHelper
+
+    private val profileViewModel: ProfileViewModel by viewModels()
+
+    private lateinit var favoritesAdapter: CarouselAdapter<Song>
+    private lateinit var ratedAdapter: CarouselAdapter<Song>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        toastHelper = ToastHelper(requireContext())
         return binding.root
     }
 
@@ -32,7 +50,6 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Imposta animazione fade per il settings drawer
         val settingsCard = requireView().findViewById<View>(R.id.settingsCard)
         settingsCard.alpha = 0f
         settingsCard.visibility = View.GONE
@@ -50,59 +67,188 @@ class ProfileFragment : Fragment() {
         }
 
         binding.settingsCard.findViewById<View>(R.id.setting1).setOnClickListener {
-            EditProfileDialogFragment(currentName = "Mario Rossi") { name, imageUri ->
-                binding.profileName.text = name
+            val currentUsername = (profileViewModel.currentUser.value as? Result.Success)?.data?.displayName ?: ""
+            EditProfileDialogFragment(currentName = currentUsername) { newName, imageUri ->
+                profileViewModel.updateUsername(newName)
                 imageUri?.let {
                     binding.profileImage.setImageURI(it)
                 }
             }.show(parentFragmentManager, "EditProfileDialog")
         }
 
-        binding.settingsCard.findViewById<View>(R.id.setting2).setOnClickListener {
-            showNotificationSettingsDialog()
-        }
-
-        binding.settingsCard.findViewById<View>(R.id.setting3).setOnClickListener {
-            // TODO: implement ToS
-        }
 
         binding.settingsCard.findViewById<View>(R.id.setting4).setOnClickListener {
-            // TODO: implement logout
+            profileViewModel.signOut()
         }
 
-        setupCarousels()
-        updateDataBox() // Mock popolamento
-
-        val action = R.id.action_navigation_profile_to_songsGridFragment
-
-        // Azione bottoni "Scopri tutto"
         binding.seeAllFavorites.setOnClickListener {
+            val favoriteSongsList = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
+            val action = ProfileFragmentDirections.actionNavigationProfileToSongsGridFragment(
+                songsListKey = favoriteSongsList.toTypedArray(),
+                titleKey = getString(R.string.favorites_title)
+            )
             findNavController().navigate(action)
         }
 
         binding.seeAllRated.setOnClickListener {
+            val ratedSongsList = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
+            val action = ProfileFragmentDirections.actionNavigationProfileToSongsGridFragment(
+                songsListKey = ratedSongsList.toTypedArray(),
+                titleKey = getString(R.string.rated_songs_title)
+            )
             findNavController().navigate(action)
         }
 
-
-
-    }
-
-
-    private fun showNotificationSettingsDialog() {
-        val dialog = NotificationSettingsDialogFragment(
-            trendingEnabled = true, // TODO: caricare da SharedPreferences
-            topSongEnabled = false  // TODO: caricare da SharedPreferences
-        ) { trending, topSong ->
-            // TODO: salva le preferenze aggiornate
-            val prefs = requireContext().getSharedPreferences("profile_prefs", Context.MODE_PRIVATE)
-            prefs.edit()
-                .putBoolean("notif_trending", trending)
-                .putBoolean("notif_top_song", topSong)
-                .apply()
+        favoritesAdapter = CarouselAdapter<Song>(emptyList()) { item ->
+            val clickedSong = item.third
+            showSongDialog(clickedSong)
+        }
+        ratedAdapter = CarouselAdapter<Song>(emptyList()) { item ->
+            val clickedSong = item.third
+            showSongDialog(clickedSong)
         }
 
-        dialog.show(parentFragmentManager, "NotificationSettingsDialog")
+        binding.carouselFavorites.adapter = favoritesAdapter
+        binding.carouselRated.adapter = ratedAdapter
+
+        observeViewModel()
+        profileViewModel.fetchCurrentUserDetails()
+        profileViewModel.fetchUserInteractionStats()
+        profileViewModel.fetchFavoriteSongs()
+        profileViewModel.fetchRatedSongs()
+    }
+
+    private fun observeViewModel() {
+        profileViewModel.currentUser.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    binding.profileName.text = "Caricamento..."
+                    binding.profileImage.alpha = 0.5f
+                }
+                is Result.Success -> {
+                    result.data?.let { user ->
+                        binding.profileName.text = user.displayName ?: "N/A"
+                        binding.profileImage.alpha = 1.0f
+                    } ?: run {
+                        binding.profileName.text = "Guest"
+                        binding.profileImage.alpha = 1.0f
+                    }
+                }
+                is Result.Error -> {
+                    binding.profileName.text = "Errore"
+                    binding.profileImage.alpha = 1.0f
+                    toastHelper.showShort("Errore caricamento dettagli utente: ${result.exception.message}")
+                }
+            }
+        }
+
+        profileViewModel.updateUsernameResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    toastHelper.showShort("Aggiornamento nome utente...")
+                }
+                is Result.Success -> {
+                    toastHelper.showShort("Nome utente aggiornato con successo!")
+                }
+                is Result.Error -> {
+                    toastHelper.showShort("Errore aggiornamento nome utente: ${result.exception.message}")
+                }
+            }
+        }
+
+
+        profileViewModel.signOutResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    toastHelper.showShort("Disconnessione in corso...")
+                }
+                is Result.Success -> {
+                    toastHelper.showShort("Disconnessione effettuata con successo!")
+
+                    navigateToAuthAndClearBackStack()
+                }
+                is Result.Error -> {
+                    toastHelper.showShort("Errore disconnessione: ${result.exception.message}")
+                }
+            }
+        }
+
+
+        profileViewModel.userInteractionStats.observe(viewLifecycleOwner) { result ->
+
+            when (result) {
+                is Result.Loading -> {
+                    binding.dataBox.findViewById<TextView>(R.id.val1)?.text = "..."
+                    binding.dataBox.findViewById<TextView>(R.id.val2)?.text = "..."
+                }
+                is Result.Success -> {
+                    result.data?.let { stats ->
+                        binding.dataBox.findViewById<TextView>(R.id.val1)?.text = stats.totalFavoriteSongs.toString()
+                        binding.dataBox.findViewById<TextView>(R.id.val2)?.text = stats.totalRatedSongs.toString()
+                    } ?: run {
+                        binding.dataBox.findViewById<TextView>(R.id.val1)?.text = "0"
+                        binding.dataBox.findViewById<TextView>(R.id.val2)?.text = "0"
+                    }
+                }
+                is Result.Error -> {
+                    binding.dataBox.findViewById<TextView>(R.id.val1)?.text = "N/A"
+                    binding.dataBox.findViewById<TextView>(R.id.val2)?.text = "N/A"
+                    toastHelper.showShort("Errore caricamento statistiche: ${result.exception.message}")
+                }
+            }
+        }
+
+        profileViewModel.favoriteSongs.observe(viewLifecycleOwner) { result ->
+            if (result is Result.Success) {
+                val currentRatedSongs = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = result.data ?: emptyList(), rated = currentRatedSongs)
+            } else if (result is Result.Error) {
+                toastHelper.showShort("Errore caricamento canzoni preferite: ${result.exception.message}")
+                val currentRatedSongs = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = emptyList(), rated = currentRatedSongs)
+            }
+        }
+
+        profileViewModel.ratedSongs.observe(viewLifecycleOwner) { result ->
+            if (result is Result.Success) {
+                val currentFavoriteSongs = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = currentFavoriteSongs, rated = result.data ?: emptyList())
+            } else if (result is Result.Error) {
+                toastHelper.showShort("Errore caricamento canzoni valutate: ${result.exception.message}")
+                val currentFavoriteSongs = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = currentFavoriteSongs, rated = emptyList())
+            }
+        }
+
+        profileViewModel.isLoadingFavoriteSongs.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.progressBarFavorites.visibility = View.VISIBLE
+                binding.carouselFavorites.visibility = View.GONE
+            } else {
+                binding.progressBarFavorites.visibility = View.GONE
+                binding.carouselFavorites.alpha = 0f
+                binding.carouselFavorites.visibility = View.VISIBLE
+                binding.carouselFavorites.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .start()
+            }
+        }
+
+        profileViewModel.isLoadingRatedSongs.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.progressBarRated.visibility = View.VISIBLE
+                binding.carouselRated.visibility = View.GONE
+            } else {
+                binding.progressBarRated.visibility = View.GONE
+                binding.carouselRated.alpha = 0f
+                binding.carouselRated.visibility = View.VISIBLE
+                binding.carouselRated.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .start()
+            }
+        }
     }
 
     private fun toggleSettingsDrawer() {
@@ -123,7 +269,6 @@ class ProfileFragment : Fragment() {
         }.start()
     }
 
-
     private fun animateFadeOutThenNavigate(view: View, destinationId: Int) {
         view.animate().alpha(0f).setDuration(300).withEndAction {
             findNavController().navigate(destinationId)
@@ -131,59 +276,33 @@ class ProfileFragment : Fragment() {
         }.start()
     }
 
-    private fun updateDataBox() {
-        // Mock data
-        val favoriteCount = 342
-        val ratedCount = 321
+    private fun setupCarousels(favorites: List<Song>, rated: List<Song>) {
+        val favoritesDataForCarousel: List<Triple<String, String, Song>> = favorites.map { song ->
+            Triple(song.title, song.artists.joinToString(", "), song)
+        }
 
-        binding.dataBox.findViewById<TextView>(R.id.val1)?.text = favoriteCount.toString()
-        binding.dataBox.findViewById<TextView>(R.id.val2)?.text = ratedCount.toString()
+        val ratedDataForCarousel: List<Triple<String, String, Song>> = rated.map { song ->
+            Triple(song.title, song.artists.joinToString(", "), song)
+        }
+
+        favoritesAdapter.updateData(favoritesDataForCarousel)
+        ratedAdapter.updateData(ratedDataForCarousel)
     }
 
-    private fun setupCarousels() {
-        val favorites = listOf(
-            Triple("Sonic 1", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 2", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 3", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 4", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 5", "SEGA", R.drawable.unknown_song_img)
-        )
-
-        val rated = listOf(
-            Triple("Sonic 1", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 2", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 3", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 4", "SEGA", R.drawable.unknown_song_img),
-            Triple("Sonic 5", "SEGA", R.drawable.unknown_song_img)
-        )
-
-        val favoritesAdapter = CarouselAdapter(favorites) { item ->
-            val (title, artist, imgRes) = item as Triple<*, *, *>
-            showSongDialog(title, artist, imgRes)
-        }
-
-        val ratedAdapter = CarouselAdapter(rated) { item ->
-            val (title, artist, imgRes) = item as Triple<*, *, *>
-            showSongDialog(title, artist, imgRes)
-        }
-
-        binding.carouselFavorites.adapter = favoritesAdapter
-        binding.carouselRated.adapter = ratedAdapter
-    }
-
-    private fun showSongDialog(title: Any?, artist: Any?, imgRes: Any?) {
-        val dialog = SongCardDialogFragment().apply {
-            arguments = Bundle().apply {
-                putString("title", title as? String ?: "")
-                putString("artist", artist as? String ?: "")
-                putInt("img", imgRes as? Int ?: R.drawable.unknown_song_img)
-            }
-        }
+    private fun showSongDialog(song: Song) {
+        val dialog = SongCardDialogFragment.newInstance(song)
         dialog.show(parentFragmentManager, "SongCardDialog")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun navigateToAuthAndClearBackStack() {
+        val intent = Intent(requireActivity(), AuthActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        requireActivity().finish()
     }
 }

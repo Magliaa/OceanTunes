@@ -7,6 +7,7 @@
 
     <!-- Login & Registration -->
     <string name="login_label">Login</string>
+    <string name="register">Register</string>
     <string name="login_button">ACCEDI</string>
     <string name="register_button">REGISTRATI</string>
     <string name="e_mail_hint">E-mail</string>
@@ -27,9 +28,9 @@
     <string name="login_button_description">Login pulsante</string>
 
     <!-- Navigation -->
-    <string name="naviga_le_canzoni">Naviga le canzoni del momento.</string>
+    <string name="naviga_le_canzoni">Naviga le canzoni del momento!</string>
     <string name="trending_now">In tendenza ora</string>
-    <string name="fy">In base ai tuoi gusti</string>
+    <string name="fy">Le più votate</string>
     <string name="top_charts">Top charts</string>
     <string name="find_out_more">Scopri di più</string>
     <string name="filter">Filter</string>
@@ -54,6 +55,12 @@
     <string name="cancella_cronologia">Cancella cronologia</string>
     <string name="preferite">Preferite</string>
     <string name="canzoni_valutate">Canzoni valutate</string>
+    <string name="album_format">Album: %s</string>
+    <string name="release_date_format">Data di Rilascio: %s</string>
+    <string name="credits_format">Crediti: %s</string>
     <string name="default_web_client_id">276791796214-o8hch64v2uk3a6qn3996ggpggfrdvvnk.apps.googleusercontent.com</string>
-
+    <string name="favorites_title">Preferite</string>
+    <string name="rated_songs_title">Canzoni valutate</string>
+    <string name="now_playing_title">In tendenza ora</string>
+    <string name="recommended_title">Le più votate</string>
 </resources>

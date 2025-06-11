@@ -17,8 +17,6 @@ class Settings @JvmOverloads constructor (
 
 
     private val settingText1: TextView
-    private val settingText2: TextView
-    private val settingText3: TextView
     private val settingText4: TextView
 
 
@@ -27,14 +25,10 @@ class Settings @JvmOverloads constructor (
         LayoutInflater.from(context).inflate(R.layout.item_layout_settings, this, true)
 
         settingText1 = findViewById(R.id.setting1)
-        settingText2 = findViewById(R.id.setting2)
-        settingText3 = findViewById(R.id.setting3)
         settingText4 = findViewById(R.id.setting4)
 
         listOf(
             settingText1 to attributes.getString(R.styleable.Settings_setting1),
-            settingText2 to attributes.getString(R.styleable.Settings_setting2),
-            settingText3 to attributes.getString(R.styleable.Settings_setting3),
             settingText4 to attributes.getString(R.styleable.Settings_setting4),
         ).forEach { (textView, value) ->
             if (value.isNullOrBlank()) {
