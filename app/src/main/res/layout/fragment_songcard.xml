@@ -153,8 +153,8 @@
                 app:is3Segments="true"
                 app:title1="Punteggio"
                 app:val1="1"
-                app:title2="Ranking"
-                app:val2="1"
+                app:title2=""
+                app:val2=""
                 app:title3="Preferiti"
                 app:val3="1" />
 

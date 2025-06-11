@@ -46,8 +46,7 @@ class SearchFragment : Fragment() {
 
         adapter = SongsAdapter(emptyList()) { song ->
             Log.d("SongDebug", "SearchFragment: Song clicked. Type: ${song::class.java.name}, ID: ${song.id}")
-            val imageResId = R.drawable.unknown_song_img
-            searchViewModel.addRecentSearch(Triple(song.title, song.artists.joinToString(", "), imageResId))
+            searchViewModel.addRecentSearch(Triple(song.title, song.artists.joinToString(", "), song.image))
             val dialog = SongCardDialogFragment.newInstance(song)
             dialog.show(parentFragmentManager, "song_card")
         }
@@ -103,7 +102,7 @@ class SearchFragment : Fragment() {
         val searchResults = searchViewModel.searchResults.value
         val recentSearches = searchViewModel.recentSearches.value.orEmpty()
         val noResultsMessage = searchViewModel.noResultsMessage.value.orEmpty()
-        var recentOpen = true;
+        var recentOpen = true
 
         binding.searchProgress.visibility = View.GONE
         binding.recyclerViewSongs.visibility = View.GONE
@@ -137,11 +136,11 @@ class SearchFragment : Fragment() {
                 if (recentSearches.isNotEmpty() && recentOpen) {
                     adapter.updateData(recentSearches.map { triple ->
                         SongRoom(
-                            id = triple.first,
+                            id = (triple.first + triple.second).hashCode().toString(),
                             title = triple.first,
                             artists = listOf(triple.second),
                             album = "Unknown",
-                            image = "",
+                            image = triple.third,
                             releaseDate = "Unknown",
                             credits = emptyList()
                         )
@@ -149,6 +148,7 @@ class SearchFragment : Fragment() {
                     binding.recyclerViewSongs.fadeIn()
                     binding.recentSearchesLabel.fadeIn()
                     binding.clearRecentButton.fadeIn()
+                    recentOpen = true
                 } else {
                     binding.noResultsText.text = "Nessuna ricerca recente."
                     binding.noResultsText.fadeIn()

@@ -19,8 +19,9 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import com.tunagold.oceantunes.repository.lastfm.ILastFmRepository
 import com.tunagold.oceantunes.repository.lastfm.LastFmRepository
-import com.tunagold.oceantunes.repository.song.ISongRepository
-import com.tunagold.oceantunes.repository.song.SongRepository
+// Non hai più bisogno di importare ISongRepository o SongRepository qui se non sono usati direttamente in AppModule
+// Non hai più bisogno di importare IUserRepository o UserRepository qui se non sono usati direttamente in AppModule
+import com.tunagold.oceantunes.repository.images.IImageRepository // Import per IImageRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -69,8 +70,9 @@ object AppModule {
     fun provideLastFmRepository(
         httpClient: HttpClient,
         songDao: SongDao,
-        apiKeyProvider: () -> String
-    ): ILastFmRepository = LastFmRepository(httpClient, songDao, apiKeyProvider)
+        apiKeyProvider: () -> String,
+        imageRepository: IImageRepository
+    ): ILastFmRepository = LastFmRepository(httpClient, songDao, apiKeyProvider, imageRepository)
 
     @Provides
     fun provideGoogleAuthHelper(@ApplicationContext context: Context): GoogleAuthHelper {

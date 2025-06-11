@@ -2,6 +2,7 @@ package com.tunagold.oceantunes.repository.lastfm
 
 import com.tunagold.oceantunes.model.LastFmSearchResponse
 import com.tunagold.oceantunes.model.LastFmTrackInfoResponse
+import com.tunagold.oceantunes.repository.images.IImageRepository
 import com.tunagold.oceantunes.storage.room.SongDao
 import com.tunagold.oceantunes.storage.room.SongRoom
 import com.tunagold.oceantunes.utils.Result
@@ -12,11 +13,13 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.SerializationException
 import javax.inject.Inject
+import android.util.Log
 
 class LastFmRepository @Inject constructor(
     private val httpClient: HttpClient,
     private val songDao: SongDao,
-    private val apiKeyProvider: () -> String
+    private val apiKeyProvider: () -> String,
+    private val imageRepository: IImageRepository
 ) : ILastFmRepository {
 
     private val baseUrl = "https://ws.audioscrobbler.com/2.0/"
@@ -49,14 +52,30 @@ class LastFmRepository @Inject constructor(
                     hashBytes.joinToString("") { "%02x".format(it) }
                 }
 
-                val exists = songDao.getSongById(songId) != null
-                if (!exists) {
-                    val songRoom = track.toSongRoom(songId)
-                    songDao.insertSong(songRoom)
-                    newSongs.add(songRoom)
-                } else {
-                    newSongs.add(songDao.getSongById(songId)!!)
+                val existingSong = songDao.getSongById(songId)
+                if (existingSong != null && existingSong.image.isNotEmpty() && !existingSong.image.contains("2a96cbd8b46e442fc41c2b86b821562f.png")) {
+                    newSongs.add(existingSong)
+                    Log.d("LastFmRepo", "Song already in DB with image: ${existingSong.title}")
+                    continue
                 }
+
+                var songRoom = track.toSongRoom(songId)
+
+                if (songRoom.image.isEmpty() || songRoom.image.contains("2a96cbd8b46e442fc41c2b86b821562f.png")) {
+                    Log.d("LastFmRepo", "Last.fm image missing or generic for ${songRoom.title}. Trying fallback.")
+                    val fallbackImageUrl = imageRepository.searchAlbumArt(songRoom.title, songRoom.artists.firstOrNull() ?: "")
+                    if (!fallbackImageUrl.isNullOrEmpty()) {
+                        Log.d("LastFmRepo", "Fallback image found for ${songRoom.title}: $fallbackImageUrl")
+                        songRoom = songRoom.copy(image = fallbackImageUrl)
+                    } else {
+                        Log.d("LastFmRepo", "No fallback image found for ${songRoom.title}.")
+                    }
+                } else {
+                    Log.d("LastFmRepo", "Last.fm provided valid image for ${songRoom.title}: ${songRoom.image}")
+                }
+
+                songDao.insertSong(songRoom)
+                newSongs.add(songRoom)
             }
             Result.Success(newSongs)
 
@@ -95,9 +114,15 @@ class LastFmRepository @Inject constructor(
                 hashBytes.joinToString("") { "%02x".format(it) }
             }
 
-            val songRoom = trackInfo.toSongRoom(songId)
-            songDao.insertSong(songRoom)
+            var songRoom = trackInfo.toSongRoom(songId)
 
+            if (songRoom.image.isEmpty() || songRoom.image.contains("2a96cbd8b46e442fc41c2b86b821562f.png")) {
+                val fallbackImageUrl = imageRepository.searchAlbumArt(songRoom.title, songRoom.artists.firstOrNull() ?: "")
+                if (!fallbackImageUrl.isNullOrEmpty()) {
+                    songRoom = songRoom.copy(image = fallbackImageUrl)
+                }
+            }
+            songDao.insertSong(songRoom)
             Result.Success(songRoom)
 
         } catch (e: SerializationException) {
@@ -134,9 +159,15 @@ class LastFmRepository @Inject constructor(
                 hashBytes.joinToString("") { "%02x".format(it) }
             }
 
-            val songRoom = trackInfo.toSongRoom(songId)
-            songDao.insertSong(songRoom)
+            var songRoom = trackInfo.toSongRoom(songId)
 
+            if (songRoom.image.isEmpty() || songRoom.image.contains("2a96cbd8b46e442fc41c2b86b821562f.png")) {
+                val fallbackImageUrl = imageRepository.searchAlbumArt(songRoom.title, songRoom.artists.firstOrNull() ?: "")
+                if (!fallbackImageUrl.isNullOrEmpty()) {
+                    songRoom = songRoom.copy(image = fallbackImageUrl)
+                }
+            }
+            songDao.insertSong(songRoom)
             Result.Success(songRoom)
 
         } catch (e: SerializationException) {

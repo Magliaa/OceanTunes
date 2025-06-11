@@ -1,5 +1,6 @@
 package com.tunagold.oceantunes.model
 
+import android.util.Log
 import com.tunagold.oceantunes.storage.room.SongRoom
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -50,6 +51,7 @@ data class LastFmTrack(
         image.firstOrNull { it.size == "large" }?.text ?:
         image.firstOrNull { it.size == "medium" }?.text ?:
         ""
+        Log.d("LastFmImageDebug", "Track: ${name}, Artist: ${artist}, Image URL: '$imageUrl'")
         return SongRoom(
             id = id,
             title = name,

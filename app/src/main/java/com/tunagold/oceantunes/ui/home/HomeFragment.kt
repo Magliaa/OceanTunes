@@ -45,7 +45,6 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_songsGridFragment)
         }
 
-        // Fetch data if not triggered in ViewModel init
         homeViewModel.fetchTopFavoriteSongs()
         homeViewModel.fetchTopRatedSongs()
     }
@@ -54,7 +53,7 @@ class HomeFragment : Fragment() {
         homeViewModel.topFavoriteSongs.observe(viewLifecycleOwner) { result ->
             val rated = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
             when (result) {
-                is Result.Loading -> { /* show loading state if needed */ }
+                is Result.Loading -> { }
                 is Result.Success -> {
                     setupCarousels(result.data, rated)
                 }
@@ -67,7 +66,7 @@ class HomeFragment : Fragment() {
         homeViewModel.topRatedSongs.observe(viewLifecycleOwner) { result ->
             val favorites = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
             when (result) {
-                is Result.Loading -> { /* show loading state if needed */ }
+                is Result.Loading -> { }
                 is Result.Success -> {
                     setupCarousels(favorites, result.data)
                 }
@@ -80,30 +79,30 @@ class HomeFragment : Fragment() {
 
     private fun setupCarousels(favorites: List<Song>, rated: List<Song>) {
         val favoritesItems = favorites.map {
-            Triple(it.title, it.artists.joinToString(", "), R.drawable.unknown_song_img)
+            Triple(it.title, it.artists.joinToString(", "), it.image)
         }
 
         val ratedItems = rated.map {
-            Triple(it.title, it.artists.joinToString(", "), R.drawable.unknown_song_img)
+            Triple(it.title, it.artists.joinToString(", "), it.image)
         }
 
         binding.carouselNowSongs.adapter = CarouselAdapter(favoritesItems) { item ->
-            val (title, artist, imgRes) = item as Triple<*, *, *>
-            showSongDialog(title, artist, imgRes)
+            val (title, artist, imageUrl) = item
+            showSongDialog(title, artist, imageUrl)
         }
 
         binding.carouselRecommended.adapter = CarouselAdapter(ratedItems) { item ->
-            val (title, artist, imgRes) = item as Triple<*, *, *>
-            showSongDialog(title, artist, imgRes)
+            val (title, artist, imageUrl) = item
+            showSongDialog(title, artist, imageUrl)
         }
     }
 
-    private fun showSongDialog(title: Any?, artist: Any?, imgRes: Any?) {
+    private fun showSongDialog(title: String?, artist: String?, imageUrl: String?) {
         val dialog = SongCardDialogFragment().apply {
             arguments = Bundle().apply {
-                putString("title", title as? String ?: "")
-                putString("artist", artist as? String ?: "")
-                putInt("img", imgRes as? Int ?: R.drawable.unknown_song_img)
+                putString("title", title ?: "")
+                putString("artist", artist ?: "")
+                putString("imageUrl", imageUrl ?: "")
             }
         }
         dialog.show(parentFragmentManager, "SongCardDialog")

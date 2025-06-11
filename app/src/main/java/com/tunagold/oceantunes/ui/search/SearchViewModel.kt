@@ -16,7 +16,7 @@ import javax.inject.Inject
 import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.tunagold.oceantunes.R
-import android.util.Log // Added import for Log
+import android.util.Log
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -27,8 +27,8 @@ class SearchViewModel @Inject constructor(
     private val _searchResults = MutableLiveData<Result<List<Song>>>()
     val searchResults: LiveData<Result<List<Song>>> = _searchResults
 
-    private val _recentSearches = MutableLiveData<List<Triple<String, String, Int>>>()
-    val recentSearches: LiveData<List<Triple<String, String, Int>>> = _recentSearches
+    private val _recentSearches = MutableLiveData<List<Triple<String, String, String>>>()
+    val recentSearches: LiveData<List<Triple<String, String, String>>> = _recentSearches
 
     private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -78,24 +78,22 @@ class SearchViewModel @Inject constructor(
                     Log.e("SearchViewModel", "Search failed: ${result.exception.message}", result.exception)
                     _noResultsMessage.value = "Errore durante la ricerca: ${result.exception.message}"
                 }
-                Result.Loading -> {
-                    Log.d("SearchViewModel", "Search result is loading (should not happen after suspend call).")
-                }
+                Result.Loading -> { }
             }
             _isLoading.value = false
         }
     }
 
-    fun addRecentSearch(song: Triple<String, String, Int>) {
+    fun addRecentSearch(songData: Triple<String, String, String>) {
         val currentList = _recentSearches.value.orEmpty().toMutableList()
-        currentList.removeAll { it.first == song.first && it.second == song.second && it.third == song.third }
-        currentList.add(0, song)
+        currentList.removeAll { it.first == songData.first && it.second == songData.second && it.third == songData.third }
+        currentList.add(0, songData)
         if (currentList.size > recentSearchesMaxCount) {
             currentList.removeLast()
         }
         _recentSearches.value = currentList
         saveRecentSearches(currentList)
-        Log.d("SearchViewModel", "Added recent search: ${song.first} by ${song.second}. Current recent searches: ${currentList.size}")
+        Log.d("SearchViewModel", "Added recent search: ${songData.first} by ${songData.second}. Current recent searches: ${currentList.size}")
     }
 
     fun clearRecentSearches() {
@@ -112,7 +110,7 @@ class SearchViewModel @Inject constructor(
         val loadedList = strings.mapNotNull { line ->
             val parts = line.split("|")
             if (parts.size == 3) {
-                Triple(parts[0], parts[1], parts[2].toIntOrNull() ?: R.drawable.unknown_song_img)
+                Triple(parts[0], parts[1], parts[2])
             } else null
         }.toMutableList()
         _recentSearches.value = loadedList
@@ -122,7 +120,7 @@ class SearchViewModel @Inject constructor(
         Log.d("SearchViewModel", "Loaded ${loadedList.size} recent searches.")
     }
 
-    private fun saveRecentSearches(list: List<Triple<String, String, Int>>) {
+    private fun saveRecentSearches(list: List<Triple<String, String, String>>) {
         val prefs = context.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
         val strings = list.map { "${it.first}|${it.second}|${it.third}" }.toSet()
         prefs.edit {

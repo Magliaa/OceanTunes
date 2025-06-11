@@ -17,8 +17,8 @@ import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
 import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
 import com.tunagold.oceantunes.utils.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
-import com.tunagold.oceantunes.model.Song // Import Song model
-import com.tunagold.oceantunes.utils.Result // Import your custom Result class
+import com.tunagold.oceantunes.model.Song
+import com.tunagold.oceantunes.utils.Result
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -68,13 +68,9 @@ class ProfileFragment : Fragment() {
             }.show(parentFragmentManager, "EditProfileDialog")
         }
 
-
         binding.settingsCard.findViewById<View>(R.id.setting4).setOnClickListener {
             profileViewModel.signOut()
         }
-
-        // setupCarousels() // Will be called after data is observed
-        // Removed updateDataBox() call as data is now dynamic
 
         val action = R.id.action_navigation_profile_to_songsGridFragment
 
@@ -87,7 +83,6 @@ class ProfileFragment : Fragment() {
         }
 
         observeViewModel()
-        // Initiate all data fetching when the view is created
         profileViewModel.fetchCurrentUserDetails()
         profileViewModel.fetchUserInteractionStats()
         profileViewModel.fetchFavoriteSongs()
@@ -104,21 +99,15 @@ class ProfileFragment : Fragment() {
                 is Result.Success -> {
                     result.data?.let { user ->
                         binding.profileName.text = user.displayName ?: "N/A"
-                        // Load profile image using Glide or Coil if photoUrl is available
-                        // user.photoUrl?.let { url ->
-                        //     Glide.with(this).load(url).into(binding.profileImage)
-                        // } ?: binding.profileImage.setImageResource(R.drawable.default_profile_pic)
                         binding.profileImage.alpha = 1.0f
                     } ?: run {
                         binding.profileName.text = "Guest"
                         binding.profileImage.alpha = 1.0f
-                        // binding.profileImage.setImageResource(R.drawable.default_profile_pic)
                     }
                 }
                 is Result.Error -> {
                     binding.profileName.text = "Errore"
                     binding.profileImage.alpha = 1.0f
-                    // binding.profileImage.setImageResource(R.drawable.error_profile_pic)
                     toastHelper.showShort("Errore caricamento dettagli utente: ${result.exception.message}")
                 }
             }
@@ -178,40 +167,30 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.favoriteSongs.observe(viewLifecycleOwner) { result ->
             when (result) {
-                is Result.Loading -> {
-                    // Show loading for favorite songs carousel
-                    // binding.carouselFavorites.alpha = 0.5f
-                }
+                is Result.Loading -> { }
                 is Result.Success -> {
                     result.data?.let { songs ->
                         setupCarousels(favorites = songs, rated = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList())
                     }
-                    // binding.carouselFavorites.alpha = 1.0f
                 }
                 is Result.Error -> {
                     toastHelper.showShort("Errore caricamento canzoni preferite: ${result.exception.message}")
                     setupCarousels(favorites = emptyList(), rated = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList())
-                    // binding.carouselFavorites.alpha = 1.0f
                 }
             }
         }
 
         profileViewModel.ratedSongs.observe(viewLifecycleOwner) { result ->
             when (result) {
-                is Result.Loading -> {
-                    // Show loading for rated songs carousel
-                    // binding.carouselRated.alpha = 0.5f
-                }
+                is Result.Loading -> { }
                 is Result.Success -> {
                     result.data?.let { songs ->
                         setupCarousels(favorites = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList(), rated = songs)
                     }
-                    // binding.carouselRated.alpha = 1.0f
                 }
                 is Result.Error -> {
                     toastHelper.showShort("Errore caricamento canzoni valutate: ${result.exception.message}")
                     setupCarousels(favorites = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList(), rated = emptyList())
-                    // binding.carouselRated.alpha = 1.0f
                 }
             }
         }
@@ -244,33 +223,33 @@ class ProfileFragment : Fragment() {
 
     private fun setupCarousels(favorites: List<Song>, rated: List<Song>) {
         val favoritesTripleList = favorites.map { song ->
-            Triple(song.title, song.artists.joinToString(", "), R.drawable.unknown_song_img)
+            Triple(song.title, song.artists.joinToString(", "), song.image)
         }
 
         val ratedTripleList = rated.map { song ->
-            Triple(song.title, song.artists.joinToString(", "), R.drawable.unknown_song_img)
+            Triple(song.title, song.artists.joinToString(", "), song.image)
         }
 
         val favoritesAdapter = CarouselAdapter(favoritesTripleList) { item ->
-            val (title, artist, imgRes) = item as Triple<*, *, *>
-            showSongDialog(title, artist, imgRes)
+            val (title, artist, imageUrl) = item
+            showSongDialog(title, artist, imageUrl)
         }
 
         val ratedAdapter = CarouselAdapter(ratedTripleList) { item ->
-            val (title, artist, imgRes) = item as Triple<*, *, *>
-            showSongDialog(title, artist, imgRes)
+            val (title, artist, imageUrl) = item
+            showSongDialog(title, artist, imageUrl)
         }
 
         binding.carouselFavorites.adapter = favoritesAdapter
         binding.carouselRated.adapter = ratedAdapter
     }
 
-    private fun showSongDialog(title: Any?, artist: Any?, imgRes: Any?) {
+    private fun showSongDialog(title: String?, artist: String?, imageUrl: String?) {
         val dialog = SongCardDialogFragment().apply {
             arguments = Bundle().apply {
-                putString("title", title as? String ?: "")
-                putString("artist", artist as? String ?: "")
-                putInt("img", imgRes as? Int ?: R.drawable.unknown_song_img)
+                putString("title", title ?: "")
+                putString("artist", artist ?: "")
+                putString("imageUrl", imageUrl ?: "")
             }
         }
         dialog.show(parentFragmentManager, "SongCardDialog")
