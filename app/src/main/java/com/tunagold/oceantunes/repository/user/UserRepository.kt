@@ -7,33 +7,37 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.FieldValue // Import FieldValue for increment
+import com.google.firebase.firestore.FieldValue
 import com.tunagold.oceantunes.model.User
 import com.tunagold.oceantunes.model.UserSongInteraction
 import com.tunagold.oceantunes.model.Song
-import com.tunagold.oceantunes.model.GlobalSongStats // Import GlobalSongStats
-import com.tunagold.oceantunes.model.UserInteractionStats // Import UserInteractionStats
-import com.tunagold.oceantunes.repository.song.ISongRepository // Import ISongRepository
+import com.tunagold.oceantunes.model.GlobalSongStats
+import com.tunagold.oceantunes.model.UserInteractionStats
+import com.tunagold.oceantunes.repository.song.ISongRepository
 import com.tunagold.oceantunes.utils.Result
-import kotlinx.coroutines.flow.firstOrNull // Import firstOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await // Import await()
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import android.util.Log
+import com.tunagold.oceantunes.repository.lastfm.ILastFmRepository
+import com.tunagold.oceantunes.model.toSong // Ensure this import is correct for SongRoom.toSong()
 
 class UserRepository @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore, // Injected
-    private val songRepository: ISongRepository // Injected
+    private val firestore: FirebaseFirestore,
+    private val songRepository: ISongRepository,
+    private val lastFmRepository: ILastFmRepository // Ensure this is injected if not already
 ) : IUserRepository {
 
     private val usersCollection = firestore.collection("users")
-    private val globalSongsCollection = firestore.collection("globalSongs") // Collection for global song stats
+    private val globalSongsCollection = firestore.collection("globalSongs")
 
+    // --- Authentication and User Profile Methods (No change) ---
     override fun signIn(email: String, password: String): LiveData<Result<String>> {
         val result = MutableLiveData<Result<String>>()
-        result.value = Result.Loading // Set loading state
+        result.value = Result.Loading
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 result.value = if (task.isSuccessful) {
@@ -47,7 +51,7 @@ class UserRepository @Inject constructor(
 
     override fun signUp(email: String, password: String, username: String): LiveData<Result<String>> {
         val result = MutableLiveData<Result<String>>()
-        result.value = Result.Loading // Set loading state
+        result.value = Result.Loading
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -61,7 +65,6 @@ class UserRepository @Inject constructor(
                     firebaseUser?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener { updateTask ->
                             if (updateTask.isSuccessful) {
-                                // Also create user document in Firestore
                                 val newUser = User(
                                     uid = uid,
                                     email = email,
@@ -90,7 +93,7 @@ class UserRepository @Inject constructor(
 
     override fun signInWithGoogle(idToken: String): LiveData<Result<String>> {
         val result = MutableLiveData<Result<String>>()
-        result.value = Result.Loading // Set loading state
+        result.value = Result.Loading
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
@@ -99,11 +102,9 @@ class UserRepository @Inject constructor(
                     val uid = firebaseUser?.uid ?: ""
                     val email = firebaseUser?.email
 
-                    // Check if user already exists in Firestore users collection
                     usersCollection.document(uid).get()
                         .addOnCompleteListener { getDocTask ->
                             if (getDocTask.isSuccessful && !getDocTask.result.exists()) {
-                                // User does not exist, create new document
                                 val newUser = User(
                                     uid = uid,
                                     email = email,
@@ -119,10 +120,8 @@ class UserRepository @Inject constructor(
                                         }
                                     }
                             } else if (getDocTask.isSuccessful) {
-                                // User already exists
                                 result.value = Result.Success("Signed in with Google")
                             } else {
-                                // Error checking user existence
                                 result.value = Result.Error(getDocTask.exception ?: Exception("Failed to check Google user profile existence"))
                             }
                         }
@@ -135,7 +134,7 @@ class UserRepository @Inject constructor(
 
     override fun signOut(): LiveData<Result<String>> {
         val result = MutableLiveData<Result<String>>()
-        result.value = Result.Loading // Set loading state
+        result.value = Result.Loading
         auth.signOut()
         result.value = Result.Success("Signed out")
         return result
@@ -147,7 +146,7 @@ class UserRepository @Inject constructor(
 
     override fun updateUsername(newUsername: String): LiveData<Result<String>> {
         val result = MutableLiveData<Result<String>>()
-        result.value = Result.Loading // Set loading state
+        result.value = Result.Loading
         val firebaseUser = auth.currentUser
 
         if (firebaseUser != null) {
@@ -158,7 +157,6 @@ class UserRepository @Inject constructor(
             firebaseUser.updateProfile(profileUpdates)
                 .addOnCompleteListener { authTask ->
                     if (authTask.isSuccessful) {
-                        // Also update username in Firestore user document
                         val updates = mapOf("displayName" to newUsername)
                         usersCollection.document(firebaseUser.uid).update(updates)
                             .addOnCompleteListener { firestoreTask ->
@@ -180,7 +178,7 @@ class UserRepository @Inject constructor(
 
     override fun getCurrentUserDetails(): LiveData<Result<User>> {
         val result = MutableLiveData<Result<User>>()
-        result.value = Result.Loading // Set loading state
+        result.value = Result.Loading
         val firebaseUser = auth.currentUser
 
         if (firebaseUser != null) {
@@ -188,7 +186,6 @@ class UserRepository @Inject constructor(
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val firestoreUser = task.result.toObject(User::class.java)
-                        // Combine data from Firebase Auth and Firestore
                         if (firestoreUser != null) {
                             val fullUser = firestoreUser.copy(
                                 uid = firebaseUser.uid,
@@ -198,7 +195,6 @@ class UserRepository @Inject constructor(
                             )
                             result.value = Result.Success(fullUser)
                         } else {
-                            // If Firestore doc doesn't exist, create a basic User from Auth data
                             val basicUser = User(
                                 uid = firebaseUser.uid,
                                 email = firebaseUser.email,
@@ -217,6 +213,7 @@ class UserRepository @Inject constructor(
         return result
     }
 
+    // --- Song Interaction and Stats Methods (No change) ---
     override fun setUserSongRating(songId: String, rating: Float): LiveData<Result<Unit>> {
         val result = MutableLiveData<Result<Unit>>()
         result.value = Result.Loading
@@ -230,38 +227,33 @@ class UserRepository @Inject constructor(
                 val userSnapshot = transaction.get(userSongDocRef)
                 val globalSnapshot = transaction.get(globalSongStatsDocRef)
 
-                val oldRating = userSnapshot.getDouble("rating")?.toFloat() ?: 0f // Get previous rating
+                val oldRating = userSnapshot.getDouble("rating")?.toFloat() ?: 0f
                 val newRating = rating
 
-                // Update user's specific song interaction
                 transaction.set(userSongDocRef, mapOf("rating" to newRating, "songId" to songId, "userId" to uid), SetOptions.merge())
 
-                // Update global song stats
                 val globalSumOfRatings = globalSnapshot.getDouble("sumOfRatings") ?: 0.0
                 val globalTotalRatedCount = globalSnapshot.getLong("totalRatedCount") ?: 0L
 
                 val newSumOfRatings = if (oldRating > 0f && newRating > 0f) {
-                    // User changed an existing rating
                     globalSumOfRatings - oldRating + newRating
                 } else if (oldRating == 0f && newRating > 0f) {
-                    // User rated for the first time
                     globalSumOfRatings + newRating
                 } else if (oldRating > 0f && newRating == 0f) {
-                    // User removed their rating (set to 0)
                     globalSumOfRatings - oldRating
                 } else {
-                    globalSumOfRatings // Rating remains 0 or invalid scenario
+                    globalSumOfRatings
                 }
 
                 val newTotalRatedCount = if (oldRating == 0f && newRating > 0f) {
-                    globalTotalRatedCount + 1 // New rating added
+                    globalTotalRatedCount + 1
                 } else if (oldRating > 0f && newRating == 0f) {
-                    globalTotalRatedCount - 1 // Rating removed
+                    globalTotalRatedCount - 1
                 } else {
-                    globalTotalRatedCount // Rating changed or no change from/to zero
+                    globalTotalRatedCount
                 }
 
-                val finalTotalRatedCount = maxOf(0L, newTotalRatedCount) // Ensure count doesn't go below zero
+                val finalTotalRatedCount = maxOf(0L, newTotalRatedCount)
 
                 transaction.set(globalSongStatsDocRef,
                     mapOf(
@@ -270,7 +262,7 @@ class UserRepository @Inject constructor(
                         "totalRatedCount" to finalTotalRatedCount
                     ), SetOptions.merge()
                 )
-                null // Transaction must return null
+                null
             }.addOnSuccessListener { result.value = Result.Success(Unit) }
                 .addOnFailureListener { e -> result.value = Result.Error(e) }
         } else {
@@ -294,15 +286,13 @@ class UserRepository @Inject constructor(
 
                 val oldIsFavorite = userSnapshot.getBoolean("isFavorite") ?: false
 
-                // Update user's specific song interaction
                 transaction.set(userSongDocRef, mapOf("isFavorite" to isFavorite, "songId" to songId, "userId" to uid), SetOptions.merge())
 
-                // Update global song stats if favorite status changed
                 if (isFavorite != oldIsFavorite) {
                     val incrementValue = if (isFavorite) 1 else -1
                     transaction.set(globalSongStatsDocRef, mapOf("id" to songId, "totalFavoriteCount" to FieldValue.increment(incrementValue.toLong())), SetOptions.merge())
                 }
-                null // Transaction must return null
+                null
             }.addOnSuccessListener { result.value = Result.Success(Unit) }
                 .addOnFailureListener { e -> result.value = Result.Error(e) }
         } else {
@@ -332,9 +322,8 @@ class UserRepository @Inject constructor(
                 )
                 transaction.set(userSongDocRef, updates, SetOptions.merge())
 
-                // Increment global play count
                 transaction.set(globalSongStatsDocRef, mapOf("id" to songId, "totalPlayCount" to FieldValue.increment(1)), SetOptions.merge())
-                null // Transaction must return null
+                null
             }.addOnSuccessListener { result.value = Result.Success(Unit) }
                 .addOnFailureListener { e -> result.value = Result.Error(e) }
         } else {
@@ -390,16 +379,30 @@ class UserRepository @Inject constructor(
         return result
     }
 
-    private suspend fun fetchSongsFromRoom(songIds: List<String>): Result<List<Song>> {
-        if (songIds.isEmpty()) return Result.Success(emptyList())
+    // --- NEW / MODIFIED SONG RETRIEVAL LOGIC ---
 
-        return try {
-            val songRooms = songRepository.getSongsByIds(songIds).firstOrNull() ?: emptyList()
-            Result.Success(songRooms.map { it as Song })
-        } catch (e: Exception) {
-            Result.Error(e)
+    // This private function now correctly leverages SongRepository.getSongById
+    private suspend fun fetchAndCacheSong(songId: String): Song? {
+        val result = songRepository.getSongById(songId) // This returns Result<SongRoom?>
+
+        return when (result) {
+            is Result.Success -> {
+                // If song is found (or fetched and cached by SongRepository), convert it to domain Song
+                result.data?.toSong()
+            }
+            is Result.Error -> {
+                Log.e("UserRepository", "Failed to fetch/cache song $songId: ${result.exception.message}")
+                null // Return null on error
+            }
+            Result.Loading -> {
+                // This state should ideally not be reached for a suspend function returning Result directly
+                Log.w("UserRepository", "Unexpected Loading state for suspend call to getSongById: $songId")
+                null
+            }
         }
     }
+
+    // --- Modified methods to use fetchAndCacheSong ---
 
     override fun getFavoriteSongsForUser(): LiveData<Result<List<Song>>> {
         val result = MutableLiveData<Result<List<Song>>>()
@@ -407,23 +410,27 @@ class UserRepository @Inject constructor(
         val uid = auth.currentUser?.uid
 
         if (uid != null) {
-            firestore.collection("users").document(uid)
-                .collection("userSongs")
-                .whereEqualTo("isFavorite", true)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val favoriteInteractionDocs = task.result.documents
-                        val favoriteSongIds = favoriteInteractionDocs.mapNotNull { it.id }
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val favoriteInteractionDocs = firestore.collection("users").document(uid)
+                        .collection("userSongs")
+                        .whereEqualTo("isFavorite", true)
+                        .get().await().documents
 
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val songsResult = fetchSongsFromRoom(favoriteSongIds)
-                            result.postValue(songsResult)
+                    val favoriteSongIds = favoriteInteractionDocs.mapNotNull { it.id }
+                    val songs = mutableListOf<Song>()
+
+                    for (songId in favoriteSongIds) {
+                        fetchAndCacheSong(songId)?.let { song ->
+                            songs.add(song)
                         }
-                    } else {
-                        result.value = Result.Error(task.exception ?: Exception("Failed to get favorite song interactions."))
                     }
+                    result.postValue(Result.Success(songs))
+                } catch (e: Exception) {
+                    Log.e("UserRepository", "Error getting favorite songs: ${e.message}", e)
+                    result.postValue(Result.Error(e))
                 }
+            }
         } else {
             result.value = Result.Error(Exception("No user logged in to get favorite songs."))
         }
@@ -436,30 +443,33 @@ class UserRepository @Inject constructor(
         val uid = auth.currentUser?.uid
 
         if (uid != null) {
-            firestore.collection("users").document(uid)
-                .collection("userSongs")
-                .whereGreaterThan("rating", 0)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val ratedInteractionDocs = task.result.documents
-                        val ratedSongIds = ratedInteractionDocs.mapNotNull { it.id }
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val ratedInteractionDocs = firestore.collection("users").document(uid)
+                        .collection("userSongs")
+                        .whereGreaterThan("rating", 0)
+                        .get().await().documents
 
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val songsResult = fetchSongsFromRoom(ratedSongIds)
-                            result.postValue(songsResult)
+                    val ratedSongIds = ratedInteractionDocs.mapNotNull { it.id }
+                    val songs = mutableListOf<Song>()
+
+                    for (songId in ratedSongIds) {
+                        fetchAndCacheSong(songId)?.let { song ->
+                            songs.add(song)
                         }
-                    } else {
-                        result.value = Result.Error(task.exception ?: Exception("Failed to get rated song interactions."))
                     }
+                    result.postValue(Result.Success(songs))
+                } catch (e: Exception) {
+                    Log.e("UserRepository", "Error getting rated songs: ${e.message}", e)
+                    result.postValue(Result.Error(e))
                 }
+            }
         } else {
             result.value = Result.Error(Exception("No user logged in to get rated songs."))
         }
         return result
     }
 
-    // New: Get global statistics for a specific song
     override fun getGlobalSongStats(songId: String): LiveData<Result<GlobalSongStats?>> {
         val result = MutableLiveData<Result<GlobalSongStats?>>()
         result.value = Result.Loading
@@ -476,7 +486,6 @@ class UserRepository @Inject constructor(
         return result
     }
 
-    // New: Get top favorite songs from global stats
     override fun getTopFavoriteSongs(): LiveData<Result<List<Song>>> {
         val result = MutableLiveData<Result<List<Song>>>()
         result.value = Result.Loading
@@ -485,20 +494,26 @@ class UserRepository @Inject constructor(
             try {
                 val globalStatsDocs = globalSongsCollection
                     .orderBy("totalFavoriteCount", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                    .limit(10) // Limit to top 10 for carousel
+                    .limit(10)
                     .get().await().documents
 
                 val songIds = globalStatsDocs.mapNotNull { it.id }
-                val songsResult = fetchSongsFromRoom(songIds)
-                result.postValue(songsResult)
+                val songs = mutableListOf<Song>()
+
+                for (songId in songIds) {
+                    fetchAndCacheSong(songId)?.let { song ->
+                        songs.add(song)
+                    }
+                }
+                result.postValue(Result.Success(songs))
             } catch (e: Exception) {
+                Log.e("UserRepository", "Error getting top favorite songs: ${e.message}", e)
                 result.postValue(Result.Error(e))
             }
         }
         return result
     }
 
-    // New: Get top rated songs from global stats
     override fun getTopRatedSongs(): LiveData<Result<List<Song>>> {
         val result = MutableLiveData<Result<List<Song>>>()
         result.value = Result.Loading
@@ -507,13 +522,20 @@ class UserRepository @Inject constructor(
             try {
                 val globalStatsDocs = globalSongsCollection
                     .orderBy("avgScore", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                    .limit(10) // Limit to top 10 for carousel
+                    .limit(10)
                     .get().await().documents
 
                 val songIds = globalStatsDocs.mapNotNull { it.id }
-                val songsResult = fetchSongsFromRoom(songIds)
-                result.postValue(songsResult)
+                val songs = mutableListOf<Song>()
+
+                for (songId in songIds) {
+                    fetchAndCacheSong(songId)?.let { song ->
+                        songs.add(song)
+                    }
+                }
+                result.postValue(Result.Success(songs))
             } catch (e: Exception) {
+                Log.e("UserRepository", "Error getting top rated songs: ${e.message}", e)
                 result.postValue(Result.Error(e))
             }
         }

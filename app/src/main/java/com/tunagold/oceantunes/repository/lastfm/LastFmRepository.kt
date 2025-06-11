@@ -32,30 +32,31 @@ class LastFmRepository @Inject constructor(
                 parameter("track", query)
                 parameter("api_key", apiKeyProvider())
                 parameter("format", "json")
-                parameter("limit", 10)
+                parameter("limit", 50)
             }
 
             if (response.status.value != 200) {
-                return Result.Error(Exception("Last.fm API search error: ${response.status.value} - ${response.bodyAsText()}"))
+                val errorBody = response.bodyAsText()
+                Log.e("LastFmRepo", "Last.fm API search error: ${response.status.value} - $errorBody")
+                return Result.Error(Exception("Last.fm API search error: ${response.status.value} - $errorBody"))
             }
 
             val lastFmResponse = json.decodeFromString<LastFmSearchResponse>(response.bodyAsText())
-            val tracks = lastFmResponse.results.trackmatches.track
+            val rawTracks = lastFmResponse.results.trackmatches.track
 
             val newSongs = mutableListOf<SongRoom>()
-            for (track in tracks) {
-                val songId = if (!track.mbid.isNullOrEmpty()) {
-                    track.mbid
-                } else {
-                    val md = java.security.MessageDigest.getInstance("MD5")
-                    val hashBytes = md.digest(track.url.toByteArray())
-                    hashBytes.joinToString("") { "%02x".format(it) }
+            for (track in rawTracks) {
+                if (track.mbid.isNullOrEmpty()) {
+                    Log.d("LastFmRepo", "Skipping track '${track.name}' by '${track.artist}' due to missing MBID.")
+                    continue
                 }
+
+                val songId = track.mbid
 
                 val existingSong = songDao.getSongById(songId)
                 if (existingSong != null && existingSong.image.isNotEmpty() && !existingSong.image.contains("2a96cbd8b46e442fc41c2b86b821562f.png")) {
                     newSongs.add(existingSong)
-                    Log.d("LastFmRepo", "Song already in DB with image: ${existingSong.title}")
+                    Log.d("LastFmRepo", "Song already in DB with valid image: ${existingSong.title}")
                     continue
                 }
 
@@ -80,8 +81,10 @@ class LastFmRepository @Inject constructor(
             Result.Success(newSongs)
 
         } catch (e: SerializationException) {
+            Log.e("LastFmRepo", "Failed to parse Last.fm search response: ${e.message}", e)
             Result.Error(Exception("Failed to parse Last.fm search response: ${e.message}"))
         } catch (e: Exception) {
+            Log.e("LastFmRepo", "Error during Last.fm search: ${e.message}", e)
             Result.Error(e)
         }
     }
@@ -97,14 +100,22 @@ class LastFmRepository @Inject constructor(
             }
 
             if (response.status.value == 404 || response.status.value == 500) {
+                Log.w("LastFmRepo", "Last.fm API returned ${response.status.value} for track info (artist: $artist, track: $track). Treating as not found.")
                 return Result.Success(null)
             }
             if (response.status.value != 200) {
-                return Result.Error(Exception("Last.fm API getTrackInfo error: ${response.status.value} - ${response.bodyAsText()}"))
+                val errorBody = response.bodyAsText()
+                Log.e("LastFmRepo", "Last.fm API getTrackInfo error: ${response.status.value} - $errorBody")
+                return Result.Error(Exception("Last.fm API getTrackInfo error: ${response.status.value} - $errorBody"))
             }
 
             val lastFmTrackInfoResponse = json.decodeFromString<LastFmTrackInfoResponse>(response.bodyAsText())
-            val trackInfo = lastFmTrackInfoResponse.track
+            val trackInfo = lastFmTrackInfoResponse.track // Now this can be null
+
+            if (trackInfo == null || trackInfo.mbid.isNullOrEmpty()) {
+                Log.w("LastFmRepo", "No track info found or valid MBID in Last.fm response for (artist: $artist, track: $track).")
+                return Result.Success(null)
+            }
 
             val songId = if (!trackInfo.mbid.isNullOrEmpty()) {
                 trackInfo.mbid
@@ -122,12 +133,14 @@ class LastFmRepository @Inject constructor(
                     songRoom = songRoom.copy(image = fallbackImageUrl)
                 }
             }
-            songDao.insertSong(songRoom)
+            songDao.insertSong(songRoom) // Insert the fetched song into Room
             Result.Success(songRoom)
 
         } catch (e: SerializationException) {
-            Result.Error(Exception("Failed to parse Last.fm track info response: ${e.message}"))
+            Log.e("LastFmRepo", "Failed to parse Last.fm track info response for (artist: $artist, track: $track): ${e.message}", e)
+            Result.Success(null) // Treat as not found by artist/track
         } catch (e: Exception) {
+            Log.e("LastFmRepo", "Error during Last.fm getTrackInfo: ${e.message}", e)
             Result.Error(e)
         }
     }
@@ -142,16 +155,26 @@ class LastFmRepository @Inject constructor(
             }
 
             if (response.status.value == 404 || response.status.value == 500) {
+                Log.w("LastFmRepo", "Last.fm API returned ${response.status.value} for MBID $mbid. Treating as not found.")
                 return Result.Success(null)
             }
             if (response.status.value != 200) {
-                return Result.Error(Exception("Last.fm API getTrackInfoByMbid error: ${response.status.value} - ${response.bodyAsText()}"))
+                val errorBody = response.bodyAsText()
+                Log.e("LastFmRepo", "Last.fm API getTrackInfoByMbid error: ${response.status.value} - $errorBody")
+                return Result.Error(Exception("Last.fm API getTrackInfoByMbid error: ${response.status.value} - $errorBody"))
             }
 
             val lastFmTrackInfoResponse = json.decodeFromString<LastFmTrackInfoResponse>(response.bodyAsText())
             val trackInfo = lastFmTrackInfoResponse.track
 
-            val songId = if (!trackInfo.mbid.isNullOrEmpty()) {
+            if (trackInfo == null || trackInfo.mbid.isNullOrEmpty()) {
+                Log.w("LastFmRepo", "No track info found or valid MBID in Last.fm response for MBID $mbid. Response may have been empty/error.")
+                return Result.Success(null)
+            }
+
+            // The rest of your existing logic for processing trackInfo remains the same
+            // Use the MBID from the response if available, otherwise generate MD5
+            val songIdFromResponse = if (!trackInfo.mbid.isNullOrEmpty()) {
                 trackInfo.mbid
             } else {
                 val md = java.security.MessageDigest.getInstance("MD5")
@@ -159,7 +182,7 @@ class LastFmRepository @Inject constructor(
                 hashBytes.joinToString("") { "%02x".format(it) }
             }
 
-            var songRoom = trackInfo.toSongRoom(songId)
+            var songRoom = trackInfo.toSongRoom(songIdFromResponse)
 
             if (songRoom.image.isEmpty() || songRoom.image.contains("2a96cbd8b46e442fc41c2b86b821562f.png")) {
                 val fallbackImageUrl = imageRepository.searchAlbumArt(songRoom.title, songRoom.artists.firstOrNull() ?: "")
@@ -167,12 +190,15 @@ class LastFmRepository @Inject constructor(
                     songRoom = songRoom.copy(image = fallbackImageUrl)
                 }
             }
-            songDao.insertSong(songRoom)
+            songDao.insertSong(songRoom) // Insert the fetched song into Room
             Result.Success(songRoom)
 
         } catch (e: SerializationException) {
-            Result.Error(Exception("Failed to parse Last.fm track info response by MBID: ${e.message}"))
+            Log.e("LastFmRepo", "Serialization error for MBID $mbid: ${e.message}", e)
+            Result.Success(null)
         } catch (e: Exception) {
+            // Catches other general exceptions (network issues, etc.)
+            Log.e("LastFmRepo", "General error fetching track info by MBID $mbid: ${e.message}", e)
             Result.Error(e)
         }
     }

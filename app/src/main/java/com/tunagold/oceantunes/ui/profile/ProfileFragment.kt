@@ -3,6 +3,7 @@ package com.tunagold.oceantunes.ui.profile
 import android.annotation.SuppressLint
 import android.content.Intent // Import for Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -81,7 +82,6 @@ class ProfileFragment : Fragment() {
             profileViewModel.signOut()
         }
 
-        // --- MODIFIED NAVIGATION CALLS ---
         binding.seeAllFavorites.setOnClickListener {
             val favoriteSongsList = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
             val action = ProfileFragmentDirections.actionNavigationProfileToSongsGridFragment(

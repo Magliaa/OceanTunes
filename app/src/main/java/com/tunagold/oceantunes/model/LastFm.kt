@@ -73,7 +73,7 @@ data class LastFmImage(
 
 @Serializable
 data class LastFmTrackInfoResponse(
-    val track: LastFmTrackInfo
+    val track: LastFmTrackInfo? = null
 )
 
 @Serializable
@@ -87,12 +87,12 @@ data class LastFmTrackInfo(
     val album: LastFmAlbumInfo?,
     val wiki: LastFmWiki? = null,
     val toptags: LastFmTopTags? = null,
-    val image: List<LastFmImage>
+    val image: List<LastFmImage>? = null
 ) {
     fun toSongRoom(id: String): SongRoom {
-        val imageUrl = image.firstOrNull { it.size == "extralarge" }?.text ?:
-        image.firstOrNull { it.size == "large" }?.text ?:
-        image.firstOrNull { it.size == "medium" }?.text ?:
+        val imageUrl = image?.firstOrNull { it.size == "extralarge" }?.text ?:
+        image?.firstOrNull { it.size == "large" }?.text ?:
+        image?.firstOrNull { it.size == "medium" }?.text ?:
         ""
         return SongRoom(
             id = id,

@@ -15,7 +15,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-
     @Binds
     @Singleton
     abstract fun bindUserRepository(
@@ -28,7 +27,7 @@ abstract class RepositoryModule {
         songRepository: SongRepository
     ): ISongRepository
 
-    @Binds // NUOVO BIND
+    @Binds
     @Singleton
     abstract fun bindImageRepository(
         iTunesImageRepository: ITunesImageRepository
