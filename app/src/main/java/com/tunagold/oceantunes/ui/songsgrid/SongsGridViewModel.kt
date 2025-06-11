@@ -23,8 +23,8 @@ class SongsGridViewModel @Inject constructor(
     val isAscending: LiveData<Boolean> = _isAscending
 
     init {
-        savedStateHandle.get<List<Song>>("songs_list_key")?.let {
-            _songs.value = it
+        savedStateHandle.get<Array<Song>>("songs_list_key")?.let { songsArray ->
+            _songs.value = songsArray.toList()
         }
         savedStateHandle.get<String>("title_key")?.let {
             _title.value = it
@@ -43,7 +43,6 @@ class SongsGridViewModel @Inject constructor(
         val currentOrder = _isAscending.value ?: true
         _isAscending.value = !currentOrder
 
-        // Example sorting: by title. Implement your actual sorting logic here.
         val currentSongs = _songs.value.orEmpty().toMutableList()
         if (currentOrder) {
             _songs.value = currentSongs.sortedByDescending { it.title }

@@ -19,6 +19,9 @@ import com.tunagold.oceantunes.utils.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
 import com.tunagold.oceantunes.model.Song
 import com.tunagold.oceantunes.utils.Result
+// Import the generated Safe Args directions
+import com.tunagold.oceantunes.ui.profile.ProfileFragmentDirections
+
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -76,15 +79,25 @@ class ProfileFragment : Fragment() {
             profileViewModel.signOut()
         }
 
-        val action = R.id.action_navigation_profile_to_songsGridFragment
-
+        // --- MODIFIED NAVIGATION CALLS ---
         binding.seeAllFavorites.setOnClickListener {
+            val favoriteSongsList = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
+            val action = ProfileFragmentDirections.actionNavigationProfileToSongsGridFragment(
+                songsListKey = favoriteSongsList.toTypedArray(), // Pass as array
+                titleKey = getString(R.string.favorites_title) // Define a string resource for title
+            )
             findNavController().navigate(action)
         }
 
         binding.seeAllRated.setOnClickListener {
+            val ratedSongsList = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
+            val action = ProfileFragmentDirections.actionNavigationProfileToSongsGridFragment(
+                songsListKey = ratedSongsList.toTypedArray(), // Pass as array
+                titleKey = getString(R.string.rated_songs_title) // Define a string resource for title
+            )
             findNavController().navigate(action)
         }
+        // --- END MODIFIED NAVIGATION CALLS ---
 
         // Initialize adapters here once with empty lists
         favoritesAdapter = CarouselAdapter<Song>(emptyList()) { item ->
