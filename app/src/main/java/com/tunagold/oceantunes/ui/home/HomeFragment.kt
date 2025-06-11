@@ -9,10 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentHomeBinding
-import com.tunagold.oceantunes.model.Song
-import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
+import com.tunagold.oceantunes.model.Song // Ensure this is your Parcelable Song model
+import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter // Import the generic CarouselAdapter
 import com.tunagold.oceantunes.utils.Result
-import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
+import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment // Import SongCardDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,6 +22,10 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val homeViewModel: HomeViewModel by viewModels()
+
+    // Declare adapters as member variables to initialize once
+    private lateinit var nowSongsAdapter: CarouselAdapter<Song>
+    private lateinit var recommendedSongsAdapter: CarouselAdapter<Song>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +38,21 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize adapters here once with empty lists
+        nowSongsAdapter = CarouselAdapter<Song>(emptyList()) { item ->
+            val clickedSong = item.third // item.third is now directly of type Song
+            showSongDialog(clickedSong)
+        }
+        recommendedSongsAdapter = CarouselAdapter<Song>(emptyList()) { item ->
+            val clickedSong = item.third // item.third is now directly of type Song
+            showSongDialog(clickedSong)
+        }
+
+        // Set the adapters to the RecyclerViews
+        binding.carouselNowSongs.adapter = nowSongsAdapter
+        binding.carouselRecommended.adapter = recommendedSongsAdapter
+
 
         observeViewModel()
 
@@ -53,9 +72,9 @@ class HomeFragment : Fragment() {
         homeViewModel.topFavoriteSongs.observe(viewLifecycleOwner) { result ->
             val rated = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
             when (result) {
-                is Result.Loading -> { }
+                is Result.Loading -> { /* Keep existing content */ }
                 is Result.Success -> {
-                    setupCarousels(result.data, rated)
+                    setupCarousels(result.data ?: emptyList(), rated)
                 }
                 is Result.Error -> {
                     setupCarousels(emptyList(), rated)
@@ -66,9 +85,9 @@ class HomeFragment : Fragment() {
         homeViewModel.topRatedSongs.observe(viewLifecycleOwner) { result ->
             val favorites = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
             when (result) {
-                is Result.Loading -> { }
+                is Result.Loading -> { /* Keep existing content */ }
                 is Result.Success -> {
-                    setupCarousels(favorites, result.data)
+                    setupCarousels(favorites, result.data ?: emptyList())
                 }
                 is Result.Error -> {
                     setupCarousels(favorites, emptyList())
@@ -78,33 +97,24 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupCarousels(favorites: List<Song>, rated: List<Song>) {
-        val favoritesItems = favorites.map {
-            Triple(it.title, it.artists.joinToString(", "), it.image)
+        // Prepare data for the generic CarouselAdapter, passing the full Song object
+        val favoritesItems: List<Triple<String, String, Song>> = favorites.map {
+            Triple(it.title, it.artists.joinToString(", "), it) // Pass the entire Song object
         }
 
-        val ratedItems = rated.map {
-            Triple(it.title, it.artists.joinToString(", "), it.image)
+        val ratedItems: List<Triple<String, String, Song>> = rated.map {
+            Triple(it.title, it.artists.joinToString(", "), it) // Pass the entire Song object
         }
 
-        binding.carouselNowSongs.adapter = CarouselAdapter(favoritesItems) { item ->
-            val (title, artist, imageUrl) = item
-            showSongDialog(title, artist, imageUrl)
-        }
-
-        binding.carouselRecommended.adapter = CarouselAdapter(ratedItems) { item ->
-            val (title, artist, imageUrl) = item
-            showSongDialog(title, artist, imageUrl)
-        }
+        // Update the data in the existing adapter instances
+        nowSongsAdapter.updateData(favoritesItems)
+        recommendedSongsAdapter.updateData(ratedItems)
     }
 
-    private fun showSongDialog(title: String?, artist: String?, imageUrl: String?) {
-        val dialog = SongCardDialogFragment().apply {
-            arguments = Bundle().apply {
-                putString("title", title ?: "")
-                putString("artist", artist ?: "")
-                putString("imageUrl", imageUrl ?: "")
-            }
-        }
+    // Update showSongDialog to accept a Song object
+    private fun showSongDialog(song: Song) {
+        // Use the factory method from SongCardDialogFragment
+        val dialog = SongCardDialogFragment.newInstance(song)
         dialog.show(parentFragmentManager, "SongCardDialog")
     }
 

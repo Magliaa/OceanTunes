@@ -28,7 +28,7 @@
     <string name="login_button_description">Login pulsante</string>
 
     <!-- Navigation -->
-    <string name="naviga_le_canzoni">Naviga le canzoni del momento.</string>
+    <string name="naviga_le_canzoni">Naviga le canzoni del momento!</string>
     <string name="trending_now">In tendenza ora</string>
     <string name="fy">Le più votate</string>
     <string name="top_charts">Top charts</string>

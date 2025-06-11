@@ -30,6 +30,10 @@ class ProfileFragment : Fragment() {
 
     private val profileViewModel: ProfileViewModel by viewModels()
 
+    // Declare adapters as member variables
+    private lateinit var favoritesAdapter: CarouselAdapter<Song>
+    private lateinit var ratedAdapter: CarouselAdapter<Song>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -81,6 +85,19 @@ class ProfileFragment : Fragment() {
         binding.seeAllRated.setOnClickListener {
             findNavController().navigate(action)
         }
+
+        // Initialize adapters here once with empty lists
+        favoritesAdapter = CarouselAdapter<Song>(emptyList()) { item ->
+            val clickedSong = item.third
+            showSongDialog(clickedSong)
+        }
+        ratedAdapter = CarouselAdapter<Song>(emptyList()) { item ->
+            val clickedSong = item.third
+            showSongDialog(clickedSong)
+        }
+
+        binding.carouselFavorites.adapter = favoritesAdapter
+        binding.carouselRated.adapter = ratedAdapter
 
         observeViewModel()
         profileViewModel.fetchCurrentUserDetails()
@@ -166,32 +183,24 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.favoriteSongs.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Loading -> { }
-                is Result.Success -> {
-                    result.data?.let { songs ->
-                        setupCarousels(favorites = songs, rated = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList())
-                    }
-                }
-                is Result.Error -> {
-                    toastHelper.showShort("Errore caricamento canzoni preferite: ${result.exception.message}")
-                    setupCarousels(favorites = emptyList(), rated = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList())
-                }
+            if (result is Result.Success) {
+                val currentRatedSongs = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = result.data ?: emptyList(), rated = currentRatedSongs)
+            } else if (result is Result.Error) {
+                toastHelper.showShort("Errore caricamento canzoni preferite: ${result.exception.message}")
+                val currentRatedSongs = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = emptyList(), rated = currentRatedSongs)
             }
         }
 
         profileViewModel.ratedSongs.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Loading -> { }
-                is Result.Success -> {
-                    result.data?.let { songs ->
-                        setupCarousels(favorites = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList(), rated = songs)
-                    }
-                }
-                is Result.Error -> {
-                    toastHelper.showShort("Errore caricamento canzoni valutate: ${result.exception.message}")
-                    setupCarousels(favorites = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList(), rated = emptyList())
-                }
+            if (result is Result.Success) {
+                val currentFavoriteSongs = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = currentFavoriteSongs, rated = result.data ?: emptyList())
+            } else if (result is Result.Error) {
+                toastHelper.showShort("Errore caricamento canzoni valutate: ${result.exception.message}")
+                val currentFavoriteSongs = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(favorites = currentFavoriteSongs, rated = emptyList())
             }
         }
     }
@@ -222,36 +231,21 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupCarousels(favorites: List<Song>, rated: List<Song>) {
-        val favoritesTripleList = favorites.map { song ->
-            Triple(song.title, song.artists.joinToString(", "), song.image)
+        val favoritesDataForCarousel: List<Triple<String, String, Song>> = favorites.map { song ->
+            Triple(song.title, song.artists.joinToString(", "), song)
         }
 
-        val ratedTripleList = rated.map { song ->
-            Triple(song.title, song.artists.joinToString(", "), song.image)
+        val ratedDataForCarousel: List<Triple<String, String, Song>> = rated.map { song ->
+            Triple(song.title, song.artists.joinToString(", "), song)
         }
 
-        val favoritesAdapter = CarouselAdapter(favoritesTripleList) { item ->
-            val (title, artist, imageUrl) = item
-            showSongDialog(title, artist, imageUrl)
-        }
-
-        val ratedAdapter = CarouselAdapter(ratedTripleList) { item ->
-            val (title, artist, imageUrl) = item
-            showSongDialog(title, artist, imageUrl)
-        }
-
-        binding.carouselFavorites.adapter = favoritesAdapter
-        binding.carouselRated.adapter = ratedAdapter
+        // Now, update the existing adapters instead of recreating them
+        favoritesAdapter.updateData(favoritesDataForCarousel)
+        ratedAdapter.updateData(ratedDataForCarousel)
     }
 
-    private fun showSongDialog(title: String?, artist: String?, imageUrl: String?) {
-        val dialog = SongCardDialogFragment().apply {
-            arguments = Bundle().apply {
-                putString("title", title ?: "")
-                putString("artist", artist ?: "")
-                putString("imageUrl", imageUrl ?: "")
-            }
-        }
+    private fun showSongDialog(song: Song) {
+        val dialog = SongCardDialogFragment.newInstance(song)
         dialog.show(parentFragmentManager, "SongCardDialog")
     }
 
