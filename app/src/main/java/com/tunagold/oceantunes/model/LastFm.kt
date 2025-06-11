@@ -3,7 +3,7 @@ package com.tunagold.oceantunes.model
 import com.tunagold.oceantunes.storage.room.SongRoom
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
+import java.security.MessageDigest
 
 @Serializable
 data class LastFmSearchResponse(
@@ -26,7 +26,7 @@ data class LastFmSearchResults(
 @Serializable
 data class LastFmQuery(
     val role: String,
-    val searchTerms: String? = null, // FIXED: Made nullable to handle missing field
+    val searchTerms: String? = null,
     val startPage: String
 )
 
@@ -43,15 +43,15 @@ data class LastFmTrack(
     @SerialName("listeners")
     val listeners: String,
     val image: List<LastFmImage>,
-    val mbid: String? = null // Added mbid here as it can sometimes be present in search results for direct mapping
+    val mbid: String? = null
 ) {
-    fun toSongRoom(): SongRoom {
+    fun toSongRoom(id: String): SongRoom {
         val imageUrl = image.firstOrNull { it.size == "extralarge" }?.text ?:
         image.firstOrNull { it.size == "large" }?.text ?:
         image.firstOrNull { it.size == "medium" }?.text ?:
         ""
         return SongRoom(
-            id = mbid ?: url, // Prefer MBID if available, else use URL for ID
+            id = id,
             title = name,
             artists = listOf(artist),
             album = "",
@@ -87,13 +87,13 @@ data class LastFmTrackInfo(
     val toptags: LastFmTopTags? = null,
     val image: List<LastFmImage>
 ) {
-    fun toSongRoom(): SongRoom {
+    fun toSongRoom(id: String): SongRoom {
         val imageUrl = image.firstOrNull { it.size == "extralarge" }?.text ?:
         image.firstOrNull { it.size == "large" }?.text ?:
         image.firstOrNull { it.size == "medium" }?.text ?:
         ""
         return SongRoom(
-            id = mbid ?: url,
+            id = id,
             title = name,
             artists = listOf(artist.name),
             album = album?.title ?: "",

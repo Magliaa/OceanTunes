@@ -41,10 +41,17 @@ class LastFmRepository @Inject constructor(
 
             val newSongs = mutableListOf<SongRoom>()
             for (track in tracks) {
-                val songId = track.url
+                val songId = if (!track.mbid.isNullOrEmpty()) {
+                    track.mbid
+                } else {
+                    val md = java.security.MessageDigest.getInstance("MD5")
+                    val hashBytes = md.digest(track.url.toByteArray())
+                    hashBytes.joinToString("") { "%02x".format(it) }
+                }
+
                 val exists = songDao.getSongById(songId) != null
                 if (!exists) {
-                    val songRoom = track.toSongRoom()
+                    val songRoom = track.toSongRoom(songId)
                     songDao.insertSong(songRoom)
                     newSongs.add(songRoom)
                 } else {
@@ -78,8 +85,17 @@ class LastFmRepository @Inject constructor(
             }
 
             val lastFmTrackInfoResponse = json.decodeFromString<LastFmTrackInfoResponse>(response.bodyAsText())
-            val songRoom = lastFmTrackInfoResponse.track.toSongRoom()
+            val trackInfo = lastFmTrackInfoResponse.track
 
+            val songId = if (!trackInfo.mbid.isNullOrEmpty()) {
+                trackInfo.mbid
+            } else {
+                val md = java.security.MessageDigest.getInstance("MD5")
+                val hashBytes = md.digest(trackInfo.url.toByteArray())
+                hashBytes.joinToString("") { "%02x".format(it) }
+            }
+
+            val songRoom = trackInfo.toSongRoom(songId)
             songDao.insertSong(songRoom)
 
             Result.Success(songRoom)
@@ -108,8 +124,17 @@ class LastFmRepository @Inject constructor(
             }
 
             val lastFmTrackInfoResponse = json.decodeFromString<LastFmTrackInfoResponse>(response.bodyAsText())
-            val songRoom = lastFmTrackInfoResponse.track.toSongRoom()
+            val trackInfo = lastFmTrackInfoResponse.track
 
+            val songId = if (!trackInfo.mbid.isNullOrEmpty()) {
+                trackInfo.mbid
+            } else {
+                val md = java.security.MessageDigest.getInstance("MD5")
+                val hashBytes = md.digest(trackInfo.url.toByteArray())
+                hashBytes.joinToString("") { "%02x".format(it) }
+            }
+
+            val songRoom = trackInfo.toSongRoom(songId)
             songDao.insertSong(songRoom)
 
             Result.Success(songRoom)
