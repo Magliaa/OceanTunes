@@ -30,7 +30,7 @@
                 android:padding="16dp"
                 android:background="@drawable/bg_card_rounded">
 
-                <!-- Bottone chiusura -->
+                <!-- Close Button -->
                 <ImageButton
                     android:id="@+id/btn_close"
                     android:layout_width="48dp"
@@ -41,24 +41,51 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- Song Summary -->
-                <com.tunagold.oceantunes.ui.components.SongSummary
-                    android:id="@+id/song_summary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:isLarge="true"
-                    app:artist="Pink Floyd - Dark Side Of The Moon"
-                    app:title="Money"
-                    app:img="@drawable/moon"
+                <!-- Song Image (Directly placed, replacing SongSummary's image) -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/songImageID"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:layout_marginTop="16dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/unknown_song_img"
                     app:layout_constraintTop_toBottomOf="@id/btn_close"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Song Title (Directly placed, replacing SongSummary's title) -->
+                <TextView
+                    android:id="@+id/songTitleID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/songImageID"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="24dp" />
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:text="Song Title" />
 
-                <!-- Etichetta voto -->
+                <!-- Song Artist (Directly placed, replacing SongSummary's artist) -->
+                <TextView
+                    android:id="@+id/songArtistID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="16sp"
+                    android:textAlignment="center"
+                    app:layout_constraintTop_toBottomOf="@id/songTitleID"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="Artist Name" />
 
-                <!-- Slider + cuore -->
-
+                <!-- Vote Label -->
                 <TextView
                     android:id="@+id/vote_label"
                     android:layout_width="wrap_content"
@@ -68,16 +95,19 @@
                     android:text="Il tuo Voto:"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/song_summary" />
+                    app:layout_constraintTop_toBottomOf="@id/songArtistID" />
 
+                <!-- Slider + Heart -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/slider_row"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/vote_label"
-                    app:layout_constraintStart_toStartOf="@id/song_summary"
-                    app:layout_constraintEnd_toEndOf="@id/song_summary"
-                    android:layout_marginTop="8dp">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="8dp"
+                    android:paddingStart="72dp"
+                    android:paddingEnd="72dp">
 
                     <com.tunagold.oceantunes.ui.components.MaterialRating
                         android:id="@+id/stars_rating"
@@ -90,6 +120,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintHorizontal_chainStyle="packed"
                         app:layout_constraintEnd_toStartOf="@id/btn_like"
                         android:backgroundTint="@color/gray"
                         android:progressTint="@color/purple3"
@@ -108,7 +139,9 @@
                         app:tint="@color/white"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/stars_rating"
+                        android:layout_marginStart="16dp" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <!-- DataBox -->
@@ -118,8 +151,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     app:layout_constraintTop_toBottomOf="@id/slider_row"
-                    app:layout_constraintStart_toStartOf="@id/slider_row"
-                    app:layout_constraintEnd_toEndOf="@id/slider_row"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:is3Segments="true"
                     app:title1="Punteggio"
                     app:val1="9"
@@ -128,19 +161,38 @@
                     app:title3="Preferiti"
                     app:val3="3925" />
 
-                <!-- Data -->
+                <!-- Album TextView -->
                 <TextView
-                    android:id="@+id/song_date"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/songAlbumID"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="#333"
+                    android:text="Album: N/A"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintTop_toBottomOf="@id/song_stats" />
+
+                <!-- Release Date TextView -->
+                <TextView
+                    android:id="@+id/song_release_date_id"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="@string/song_date"
                     android:textColor="#999"
                     android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="@id/slider_row"
-                    app:layout_constraintTop_toBottomOf="@id/song_stats" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintTop_toBottomOf="@id/songAlbumID" />
 
-                <!-- Crediti -->
+                <!-- Credits TextView -->
                 <TextView
                     android:id="@+id/song_credits"
                     android:layout_width="0dp"
@@ -148,9 +200,11 @@
                     android:text="@string/info_song"
                     android:textSize="12sp"
                     android:textColor="#999"
-                    app:layout_constraintTop_toBottomOf="@id/song_date"
-                    app:layout_constraintStart_toStartOf="@id/song_date"
-                    app:layout_constraintEnd_toEndOf="@id/song_stats"
+                    app:layout_constraintTop_toBottomOf="@id/song_release_date_id"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="24dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>

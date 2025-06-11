@@ -14,6 +14,7 @@ import com.tunagold.oceantunes.databinding.FragmentLoginBinding
 import com.tunagold.oceantunes.utils.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
 import com.tunagold.oceantunes.R
+import com.tunagold.oceantunes.utils.Result
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -77,27 +78,37 @@ class LoginFragment : Fragment() {
 
     private fun observeViewModel() {
         loginViewModel.signInResult.observe(viewLifecycleOwner) { result ->
-            result.onSuccess {
-                toastHelper.showShort("Accesso effettuato con successo")
-                findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
-            }.onFailure {
-                toastHelper.showShort("Accesso fallito: ${it.message}")
+            when (result) {
+                is Result.Loading -> {
+                }
+                is Result.Success -> {
+                    toastHelper.showShort("Accesso effettuato con successo")
+                    findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
+                }
+                is Result.Error -> {
+                    toastHelper.showShort("Accesso fallito: ${result.exception.message}")
+                }
             }
         }
 
         loginViewModel.googleSignInResult.observe(viewLifecycleOwner) { result ->
-            result.onSuccess {
-                toastHelper.showShort("Accesso effettuato con successo")
-                findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
-            }.onFailure {
-                toastHelper.showShort("Accesso fallito: ${it.message}")
+            when (result) {
+                is Result.Loading -> {
+                }
+                is Result.Success -> {
+                    toastHelper.showShort("Accesso effettuato con successo")
+                    findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
+                }
+                is Result.Error -> {
+                    toastHelper.showShort("Accesso fallito: ${result.exception.message}")
+                }
             }
         }
 
-       /* loginViewModel.googleSignInIntentSenderRequest.observe(viewLifecycleOwner) { intent ->
-            val intentSenderRequest = IntentSenderRequest.Builder(intent.intentSender).build()
-            googleSignInLauncher.launch(intentSenderRequest)
-        }*/
+        loginViewModel.googleSignInIntentSenderRequest.observe(viewLifecycleOwner) { intent ->
+            //val intentSenderRequest = IntentSenderRequest.Builder(intent.intentSender).build()
+            //googleSignInLauncher.launch(intentSenderRequest)
+        }
     }
 
     override fun onDestroyView() {

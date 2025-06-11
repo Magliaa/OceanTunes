@@ -9,26 +9,34 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels // Import viewModels
 import com.tunagold.oceantunes.R
-import com.tunagold.oceantunes.ui.components.SongSummary
+import com.tunagold.oceantunes.model.Song
+import com.tunagold.oceantunes.storage.room.SongRoom
+import com.bumptech.glide.Glide
+import com.google.android.material.imageview.ShapeableImageView
+import android.widget.TextView
+import com.tunagold.oceantunes.ui.components.MaterialRating // Import MaterialRating if it's a custom view
+import dagger.hilt.android.AndroidEntryPoint // Import this for Hilt
 
+
+@AndroidEntryPoint // <--- ADD THIS ANNOTATION HERE
 class SongCardDialogFragment : DialogFragment() {
 
     private var isDismissing = false
+    private val viewModel: SongCardDialogViewModel by viewModels() // Initialize ViewModel
 
     companion object {
-        fun newInstance(song: Triple<String, String, Int>): SongCardDialogFragment {
+        private const val ARG_SONG = "song_object"
+        fun newInstance(song: Song): SongCardDialogFragment {
             val fragment = SongCardDialogFragment()
             val args = Bundle().apply {
-                putString("title", song.first)
-                putString("artist", song.second)
-                putInt("img", song.third)
+                putParcelable(ARG_SONG, song as? SongRoom) // song must be SongRoom for Parcelable
             }
             fragment.arguments = args
             return fragment
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,14 +69,39 @@ class SongCardDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val title = arguments?.getString("title") ?: ""
-        val artist = arguments?.getString("artist") ?: ""
-        val img = arguments?.getInt("img") ?: R.drawable.unknown_song_img
+        val song = arguments?.getParcelable<SongRoom>(ARG_SONG)
 
-        val summary = view.findViewById<SongSummary>(R.id.song_summary)
-        summary.setTitle(title)
-        summary.setArtist(artist)
-        summary.setImage(img)
+        song?.let {
+            viewModel.setSong(it) // Set the song in the ViewModel
+            viewModel.incrementPlayCount() // Increment play count when card is opened
+
+            // Directly populate TextViews and ImageView with initial song data
+            view.findViewById<TextView>(R.id.songTitleID)?.text = it.title
+            view.findViewById<TextView>(R.id.songArtistID)?.text = it.artists.joinToString(", ")
+
+            val songImage = view.findViewById<ShapeableImageView>(R.id.songImageID)
+            if (songImage != null) {
+                if (it.image.isNotEmpty()) {
+                    Glide.with(this)
+                        .load(it.image)
+                        .placeholder(R.drawable.unknown_song_img)
+                        .error(R.drawable.unknown_song_img)
+                        .into(songImage)
+                } else {
+                    songImage.setImageResource(R.drawable.unknown_song_img)
+                }
+            }
+
+            // Populate Album, Release Date, and Credits
+            view.findViewById<TextView>(R.id.songAlbumID)?.text = getString(R.string.album_format, it.album.ifEmpty { "N/A" })
+            view.findViewById<TextView>(R.id.song_release_date_id)?.text = getString(R.string.release_date_format, it.releaseDate.ifEmpty { "N/A" })
+            view.findViewById<TextView>(R.id.song_credits)?.text = getString(R.string.credits_format, it.credits.joinToString(", ").ifEmpty { "N/A" })
+
+        } ?: run {
+            Toast.makeText(requireContext(), "Song data not available.", Toast.LENGTH_SHORT).show()
+            dismiss()
+            return
+        }
 
         view.findViewById<ImageButton>(R.id.btn_close)?.setOnClickListener {
             dismiss()
@@ -91,20 +124,62 @@ class SongCardDialogFragment : DialogFragment() {
         card?.startAnimation(slideIn)
 
         val likeButton = view.findViewById<ImageButton>(R.id.btn_like)
-        var isLiked = false
+        val starsRating = view.findViewById<MaterialRating>(R.id.stars_rating) // Assuming MaterialRating is your custom rating bar
+        val scoreTextView = view.findViewById<TextView>(R.id.val1) // Assuming these are in DataBox
+        val rankingTextView = view.findViewById<TextView>(R.id.val2)
+        val favoritesTextView = view.findViewById<TextView>(R.id.val3)
 
-        likeButton.setOnClickListener {
-            isLiked = !isLiked
-            if (isLiked) {
-                likeButton.setImageResource(R.drawable.ic_favorite) //
-                Toast.makeText(requireContext(), "Aggiunta ai preferiti", Toast.LENGTH_SHORT).show()
+        // Observe ViewModel LiveData
+        viewModel.favoriteStatus.observe(viewLifecycleOwner) { isFavorite ->
+            if (isFavorite) {
+                likeButton.setImageResource(R.drawable.ic_favorite)
             } else {
                 likeButton.setImageResource(R.drawable.ic_favorite_border)
-                Toast.makeText(requireContext(), "Rimossa dai preferiti", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.userRating.observe(viewLifecycleOwner) { rating ->
+            starsRating?.rating = rating // Update rating bar
+        }
+
+        viewModel.globalStats.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is com.tunagold.oceantunes.utils.Result.Success -> {
+                    result.data?.let { stats ->
+                        scoreTextView?.text = String.format("%.1f", stats.avgScore) // Display average score
+                        rankingTextView?.text = stats.ranking.toString() // Display ranking
+                        favoritesTextView?.text = stats.totalFavoriteCount.toString() // Display total favorites
+                    } ?: run {
+                        scoreTextView?.text = "N/A"
+                        rankingTextView?.text = "N/A"
+                        favoritesTextView?.text = "N/A"
+                    }
+                }
+                is com.tunagold.oceantunes.utils.Result.Error -> {
+                    Toast.makeText(requireContext(), "Error loading stats: ${result.exception.message}", Toast.LENGTH_SHORT).show()
+                    scoreTextView?.text = "Err"
+                    rankingTextView?.text = "Err"
+                    favoritesTextView?.text = "Err"
+                }
+                is com.tunagold.oceantunes.utils.Result.Loading -> {
+                    scoreTextView?.text = "..."
+                    rankingTextView?.text = "..."
+                    favoritesTextView?.text = "..."
+                }
+            }
+        }
+
+        // Set listeners to call ViewModel methods
+        likeButton.setOnClickListener {
+            viewModel.toggleFavoriteStatus()
+        }
+
+        starsRating?.setOnRatingBarChangeListener { _, rating, fromUser ->
+            if (fromUser) {
+                viewModel.setUserRating(rating)
             }
         }
     }
-
 
     override fun dismiss() {
         if (isDismissing) return
@@ -140,5 +215,10 @@ class SongCardDialogFragment : DialogFragment() {
 
         root?.startAnimation(fadeOut)
         card?.startAnimation(slideOut)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // No _binding to nullify here, as SongCardDialogFragment doesn't use ViewBinding
     }
 }

@@ -1,6 +1,5 @@
 package com.tunagold.oceantunes.repository.song
 
-import com.tunagold.oceantunes.model.Song
 import com.tunagold.oceantunes.storage.room.SongRoom
 import com.tunagold.oceantunes.utils.Result
 import kotlinx.coroutines.flow.Flow
@@ -30,26 +29,6 @@ interface ISongRepository {
     fun getSongByIdFlow(songId: String): Result<Flow<SongRoom?>>
 
     /**
-     * Retrieve the flow of the top-ranked songs from the given data source.
-     */
-    fun getTopRankedSongs(): Result<Flow<List<SongRoom>>>
-
-    /**
-     * Retrieve the flow of the top-rated songs from the given data source.
-     */
-    fun getTopRatedSongs(): Result<Flow<List<SongRoom>>>
-
-    /**
-     * Retrieve the flow of the most favorite songs from the given data source.
-     */
-    fun getMostFavoriteSongs(): Result<Flow<List<SongRoom>>>
-
-    /**
-     * Retrieve the flow of the most clicked songs
-     */
-    fun getMostClickedSongs(): Result<Flow<List<SongRoom>>>
-
-    /**
      * Insert a song into the data source.
      */
     suspend fun insertSong(song: SongRoom): Result<Unit>
@@ -73,4 +52,9 @@ interface ISongRepository {
      * Delete all songs from the data source.
      */
     suspend fun deleteAllSongs(): Result<Unit>
+
+    /**
+     * Retrieve the flow of songs by a list of their IDs from the given data source.
+     */
+    fun getSongsByIds(songIds: List<String>): Flow<List<SongRoom>>
 }

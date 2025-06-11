@@ -10,6 +10,7 @@ import com.tunagold.oceantunes.utils.GoogleAuthHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tunagold.oceantunes.utils.Result
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -27,6 +28,7 @@ class LoginViewModel @Inject constructor(
     val googleSignInIntentSenderRequest: LiveData<Intent> = _googleSignInIntentSenderRequest
 
     fun signIn(email: String, password: String) {
+        _signInResult.value = Result.Loading
         viewModelScope.launch {
             userRepository.signIn(email, password).observeForever {
                 _signInResult.value = it
@@ -35,18 +37,19 @@ class LoginViewModel @Inject constructor(
     }
 
     fun initiateGoogleSignIn() {
+        _googleSignInResult.value = Result.Loading
         viewModelScope.launch {
             try {
                 val signInResult = googleAuthHelper.beginSignIn()
                 //_googleSignInIntentSenderRequest.value = signInResult.pendingIntent.intent
-
             } catch (e: Exception) {
-                _googleSignInResult.value = Result.failure(e)
+                _googleSignInResult.value = Result.Error(e)
             }
         }
     }
 
     fun handleGoogleSignInIntentResult(data: Intent) {
+        _googleSignInResult.value = Result.Loading
         viewModelScope.launch {
             when (val authResult = googleAuthHelper.handleSignInResult(data)) {
                 is GoogleAuthHelper.AuthResult.Success -> {
@@ -55,7 +58,7 @@ class LoginViewModel @Inject constructor(
                     }*/
                 }
                 is GoogleAuthHelper.AuthResult.Failure -> {
-                    _googleSignInResult.value = Result.failure(authResult.exception)
+                    _googleSignInResult.value = Result.Error(authResult.exception)
                 }
             }
         }

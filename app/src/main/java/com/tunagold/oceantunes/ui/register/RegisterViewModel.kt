@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.tunagold.oceantunes.repository.user.IUserRepository
-import kotlin.Result
+import com.tunagold.oceantunes.utils.Result
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(

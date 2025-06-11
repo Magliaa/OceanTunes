@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.OnConflictStrategy // Import OnConflictStrategy
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,23 +20,11 @@ interface SongDao {
 
     @Query("SELECT * FROM Song WHERE id = :songId")
     fun getSongByIdFlow(songId: String): Flow<SongRoom?>
-
-    @Query("SELECT * FROM Song ORDER BY ranking DESC LIMIT 100")
-    fun getTopRankedSongs(): Flow<List<SongRoom>>
-
-    @Query("SELECT * FROM Song ORDER BY avgScore DESC LIMIT 100")
-    fun getTopRatedSongs(): Flow<List<SongRoom>>
-
-    @Query("SELECT * FROM Song ORDER BY favNumber DESC LIMIT 100")
-    fun getMostFavoriteSongs(): Flow<List<SongRoom>>
-
-    @Query("SELECT * FROM Song ORDER BY ratersNumber DESC LIMIT 100")
-    fun getMostClickedSongs(): Flow<List<SongRoom>>
-
-    @Insert
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE) // Added onConflictStrategy
     suspend fun insertSong(song: SongRoom)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE) // Added onConflictStrategy
     suspend fun insertAllSongs(vararg songs: SongRoom)
 
     @Delete
@@ -46,4 +35,7 @@ interface SongDao {
 
     @Query("DELETE FROM Song")
     suspend fun deleteAllSongs()
+
+    @Query("SELECT * FROM Song WHERE id IN (:songIds)")
+    fun getSongsByIds(songIds: List<String>): Flow<List<SongRoom>>
 }

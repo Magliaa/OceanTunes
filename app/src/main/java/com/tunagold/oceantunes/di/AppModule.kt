@@ -13,22 +13,27 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import com.tunagold.oceantunes.repository.lastfm.ILastFmRepository
+import com.tunagold.oceantunes.repository.lastfm.LastFmRepository
+import com.tunagold.oceantunes.repository.song.ISongRepository
+import com.tunagold.oceantunes.repository.song.SongRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-    // Firebase
+
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-    // Firestore
     @Provides
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
-
-    // Room
     @Provides
     @Singleton
     fun provideSongDatabase(@ApplicationContext context: Context): SongDatabase =
@@ -40,6 +45,32 @@ object AppModule {
 
     @Provides
     fun provideSongDao(db: SongDatabase): SongDao = db.songDao()
+
+    @Provides
+    @Singleton
+    fun provideHttpClient(): HttpClient {
+        return HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideLastFmApiKeyProvider(): () -> String {
+        return {
+            "ccfc7ef9d6630986d0d10e2d2c39972f"
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideLastFmRepository(
+        httpClient: HttpClient,
+        songDao: SongDao,
+        apiKeyProvider: () -> String
+    ): ILastFmRepository = LastFmRepository(httpClient, songDao, apiKeyProvider)
 
     @Provides
     fun provideGoogleAuthHelper(@ApplicationContext context: Context): GoogleAuthHelper {

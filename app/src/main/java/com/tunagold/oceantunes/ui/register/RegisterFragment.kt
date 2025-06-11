@@ -11,6 +11,7 @@ import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentRegisterBinding
 import com.tunagold.oceantunes.utils.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
+import com.tunagold.oceantunes.utils.Result
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -61,11 +62,16 @@ class RegisterFragment : Fragment() {
 
     private fun observeSignUpResult() {
         viewModel.signUpResult.observe(viewLifecycleOwner) { result ->
-            result.onSuccess {
-                toastHelper.showShort("Registrazione effettuata con successo")
-                findNavController().navigate(R.id.action_registerFragment_to_mainActivityDestination)
-            }.onFailure {
-                toastHelper.showShort("Registrazione fallita: ${it.message}")
+            when (result) {
+                is Result.Loading -> {
+                }
+                is Result.Success -> {
+                    toastHelper.showShort("Registrazione effettuata con successo")
+                    findNavController().navigate(R.id.action_registerFragment_to_mainActivityDestination)
+                }
+                is Result.Error -> {
+                    toastHelper.showShort("Registrazione fallita: ${result.exception.message}")
+                }
             }
         }
     }

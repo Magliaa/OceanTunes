@@ -1,41 +1,32 @@
 package com.tunagold.oceantunes.ui.search
 
 import SpacingItemDecoration
-import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.edit
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentSearchBinding
 import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
 import com.tunagold.oceantunes.ui.songsgrid.SongsAdapter
+import com.tunagold.oceantunes.model.Song
+import com.tunagold.oceantunes.storage.room.SongRoom // Import SongRoom
+import com.tunagold.oceantunes.utils.Result
+import dagger.hilt.android.AndroidEntryPoint
+import android.util.Log // Import Log for debugging
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: SongsAdapter
-    private val recentSongs = mutableListOf<Triple<String, String, Int>>()
-    private var isSearching = false
-    private val prefsKey = "recent_searches"
-    private val handler = Handler(Looper.getMainLooper())
-
-    // TODO: BACKEND - Rimuovi questo mock e usa i dati reali
-    private val dummySongs = listOf(
-        Triple("Blinding Lights", "The Weeknd", R.drawable.unknown_song_img),
-        Triple("Levitating", "Dua Lipa", R.drawable.unknown_song_img),
-        Triple("Save Your Tears", "The Weeknd", R.drawable.unknown_song_img),
-        Triple("Peaches", "Justin Bieber", R.drawable.unknown_song_img),
-        Triple("Montero", "Lil Nas X", R.drawable.unknown_song_img)
-    )
+    private val searchViewModel: SearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,132 +44,134 @@ class SearchFragment : Fragment() {
         binding.recyclerViewSongs.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerViewSongs.addItemDecoration(SpacingItemDecoration(spacingInPixels))
 
+        // Initialize adapter with an empty list of Song objects.
+        // The click listener now receives a Song object directly.
         adapter = SongsAdapter(emptyList()) { song ->
-            if (isSearching) {
-                val alreadyInRecent = recentSongs.any {
-                    it.first == song.first && it.second == song.second && it.third == song.third
-                }
-                if (!alreadyInRecent) {
-                    recentSongs.add(0, song)
-                    if (recentSongs.size > 10) recentSongs.removeLast()
-                    saveRecentSongs()
-                }
-                isSearching = false
-            }
-
+            Log.d("SongDebug", "SearchFragment: Song clicked. Type: ${song::class.java.name}, ID: ${song.id}")
+            searchViewModel.addRecentSearch(Triple(song.title, song.artists.joinToString(", "), R.drawable.unknown_song_img))
             val dialog = SongCardDialogFragment.newInstance(song)
             dialog.show(parentFragmentManager, "song_card")
         }
 
         binding.recyclerViewSongs.adapter = adapter
 
-        loadRecentSongs()
-        showRecentSearches()
+        setupSearchBarListeners()
+        setupClearRecentButton()
+        observeViewModel()
+    }
 
+    private fun setupSearchBarListeners() {
         binding.searchBar.onClearAction = {
-            isSearching = false
             binding.searchBar.editText?.setText("")
+            searchViewModel.searchSongs("")
         }
 
         binding.searchBar.editText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchBar.editText?.text.isNullOrEmpty()) {
-                isSearching = false
-                showRecentSearches()
+                searchViewModel.searchSongs("")
             }
         }
 
         binding.searchBar.editText?.addTextChangedListener { editable ->
-            val query = editable?.toString()?.trim().orEmpty()
+            val query = editable?.toString().orEmpty()
+            searchViewModel.searchSongs(query)
+        }
+    }
 
-            handler.removeCallbacksAndMessages(null)
+    private fun setupClearRecentButton() {
+        binding.clearRecentButton.setOnClickListener {
+            searchViewModel.clearRecentSearches()
+        }
+    }
 
-            if (query.isEmpty()) {
-                isSearching = false
-                showRecentSearches()
-                return@addTextChangedListener
-            }
-
-            isSearching = true
-            binding.searchProgress.fadeIn()
-
-            binding.recyclerViewSongs.fadeOut()
-            binding.noResultsText.fadeOut()
-            binding.recentSearchesLabel.fadeOut()
-            binding.clearRecentButton.fadeOut()
-
-            handler.postDelayed({
-                // TODO: BACKEND - Sostituire con chiamata API asincrona e parsing dei risultati
-                val filtered = dummySongs.filter {
-                    it.first.contains(query, ignoreCase = true) ||
-                            it.second.contains(query, ignoreCase = true)
-                }
-
-                // TODO: BACKEND - Inserisci qui il callback per aggiornare l'adapter con i risultati veri
-                adapter.updateData(filtered)
-
+    private fun observeViewModel() {
+        searchViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.searchProgress.fadeIn()
+                binding.recyclerViewSongs.fadeOut()
+                binding.noResultsText.fadeOut()
+                binding.recentSearchesLabel.fadeOut()
+                binding.clearRecentButton.fadeOut()
+            } else {
                 binding.searchProgress.fadeOut()
-                if (filtered.isNotEmpty()) {
+            }
+        }
+
+        searchViewModel.searchResults.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    val songs = result.data ?: emptyList()
+                    // Directly pass List<Song> to the adapter
+                    adapter.updateData(songs)
+                    if (songs.isNotEmpty()) {
+                        binding.recyclerViewSongs.fadeIn()
+                        binding.noResultsText.fadeOut()
+                    } else {
+                        binding.recyclerViewSongs.fadeOut()
+                        binding.noResultsText.text = searchViewModel.noResultsMessage.value!!.ifEmpty { "Nessun risultato trovato." }
+                        binding.noResultsText.fadeIn()
+                    }
+                    binding.recentSearchesLabel.fadeOut()
+                    binding.clearRecentButton.fadeOut()
+                }
+                is Result.Error -> {
+                    adapter.updateData(emptyList()) // Pass empty list on error
+                    binding.recyclerViewSongs.fadeOut()
+                    binding.noResultsText.text = searchViewModel.noResultsMessage.value!!.ifEmpty { "Errore durante la ricerca." }
+                    binding.noResultsText.fadeIn()
+                    binding.recentSearchesLabel.fadeOut()
+                    binding.clearRecentButton.fadeOut()
+                }
+                is Result.Loading -> {
+                    // This state is primarily handled by the isLoading LiveData
+                }
+            }
+        }
+
+        searchViewModel.recentSearches.observe(viewLifecycleOwner) { recentTriples ->
+            // Only update recent searches if search bar is empty AND not currently loading search results
+            if (binding.searchBar.editText?.text.isNullOrEmpty() && searchViewModel.isLoading.value == false) {
+                // Convert List<Triple<String, String, Int>> to List<SongRoom> for the adapter
+                // This ensures the SongCardDialogFragment receives a Parcelable SongRoom object.
+                val recentSongs = recentTriples.map { triple ->
+                    SongRoom( // <--- Changed from Song to SongRoom
+                        id = triple.first, // Assuming title is unique enough for ID or you have a real ID
+                        title = triple.first,
+                        artists = listOf(triple.second),
+                        album = "Unknown", // Recent searches don't store album info
+                        image = "", // Recent searches don't store image URLs directly, rely on default
+                        releaseDate = "Unknown", // Recent searches don't store release date
+                        credits = emptyList() // Recent searches don't store credits
+                        // SongRoom constructor should have default values for ranking, avgScore etc.
+                        // if they are not explicitly provided here.
+                    )
+                }
+                adapter.updateData(recentSongs)
+                if (recentSongs.isNotEmpty()) {
                     binding.recyclerViewSongs.fadeIn()
+                    binding.recentSearchesLabel.fadeIn()
+                    binding.clearRecentButton.fadeIn()
+                    binding.noResultsText.fadeOut()
                 } else {
-                    binding.noResultsText.text = "Nessun risultato trovato"
+                    binding.recyclerViewSongs.fadeOut()
+                    binding.recentSearchesLabel.fadeOut()
+                    binding.clearRecentButton.fadeOut()
+                    binding.noResultsText.text = searchViewModel.noResultsMessage.value!!.ifEmpty { "Nessuna ricerca recente." }
                     binding.noResultsText.fadeIn()
                 }
-
-            }, 1000) // TODO: BACKEND - Rimuovere delay quando usi risultati reali
+            }
         }
 
-        binding.clearRecentButton.setOnClickListener {
-            recentSongs.clear()
-            saveRecentSongs()
-            showRecentSearches()
-        }
-    }
-
-    private fun showRecentSearches() {
-        handler.removeCallbacksAndMessages(null)
-        binding.searchProgress.fadeOut()
-        if (recentSongs.isNotEmpty()) {
-            adapter.updateData(recentSongs)
-            binding.recyclerViewSongs.fadeIn()
-            binding.noResultsText.fadeOut()
-            binding.recentSearchesLabel.fadeIn()
-            binding.clearRecentButton.fadeIn()
-        } else {
-            adapter.updateData(emptyList())
-            binding.recyclerViewSongs.fadeOut()
-            binding.noResultsText.text = "Nessuna ricerca recente"
-            binding.noResultsText.fadeIn()
-            binding.recentSearchesLabel.fadeOut()
-            binding.clearRecentButton.fadeOut()
-        }
-    }
-
-    private fun saveRecentSongs() {
-        val prefs = requireContext().getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
-        val strings = recentSongs.map { "${it.first}|${it.second}|${it.third}" }.toSet()
-        prefs.edit {
-            putStringSet(prefsKey, strings)
-        }
-    }
-
-    private fun loadRecentSongs() {
-        val prefs = requireContext().getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
-        val strings = prefs.getStringSet(prefsKey, emptySet()) ?: emptySet()
-        recentSongs.clear()
-        strings.forEach { line ->
-            val parts = line.split("|")
-            if (parts.size == 3) {
-                val title = parts[0]
-                val artist = parts[1]
-                val imageRes = parts[2].toIntOrNull() ?: R.drawable.unknown_song_img
-                recentSongs.add(Triple(title, artist, imageRes))
+        searchViewModel.noResultsMessage.observe(viewLifecycleOwner) { message ->
+            if (message.isNotEmpty() && searchViewModel.isLoading.value == false) {
+                binding.noResultsText.text = message
+                binding.noResultsText.fadeIn()
             }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacksAndMessages(null)
         _binding = null
     }
 
