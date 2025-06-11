@@ -1,6 +1,7 @@
 package com.tunagold.oceantunes.ui.profile
 
 import android.annotation.SuppressLint
+import android.content.Intent // Import for Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -19,6 +20,7 @@ import com.tunagold.oceantunes.utils.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
 import com.tunagold.oceantunes.model.Song
 import com.tunagold.oceantunes.utils.Result
+import com.tunagold.oceantunes.ui.auth.AuthActivity // Make sure to import your AuthActivity
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -30,7 +32,6 @@ class ProfileFragment : Fragment() {
 
     private val profileViewModel: ProfileViewModel by viewModels()
 
-    // Declare adapters as member variables
     private lateinit var favoritesAdapter: CarouselAdapter<Song>
     private lateinit var ratedAdapter: CarouselAdapter<Song>
 
@@ -72,9 +73,11 @@ class ProfileFragment : Fragment() {
             }.show(parentFragmentManager, "EditProfileDialog")
         }
 
+
         binding.settingsCard.findViewById<View>(R.id.setting4).setOnClickListener {
             profileViewModel.signOut()
         }
+
 
         val action = R.id.action_navigation_profile_to_songsGridFragment
 
@@ -86,7 +89,6 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        // Initialize adapters here once with empty lists
         favoritesAdapter = CarouselAdapter<Song>(emptyList()) { item ->
             val clickedSong = item.third
             showSongDialog(clickedSong)
@@ -144,6 +146,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
+
         profileViewModel.signOutResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {
@@ -151,7 +154,8 @@ class ProfileFragment : Fragment() {
                 }
                 is Result.Success -> {
                     toastHelper.showShort("Disconnessione effettuata con successo!")
-                    findNavController().navigate(R.id.auth_nav_graph)
+
+                     navigateToAuthAndClearBackStack()
                 }
                 is Result.Error -> {
                     toastHelper.showShort("Errore disconnessione: ${result.exception.message}")
@@ -159,7 +163,9 @@ class ProfileFragment : Fragment() {
             }
         }
 
+
         profileViewModel.userInteractionStats.observe(viewLifecycleOwner) { result ->
+
             when (result) {
                 is Result.Loading -> {
                     binding.dataBox.findViewById<TextView>(R.id.val1)?.text = "..."
@@ -183,6 +189,7 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.favoriteSongs.observe(viewLifecycleOwner) { result ->
+
             if (result is Result.Success) {
                 val currentRatedSongs = (profileViewModel.ratedSongs.value as? Result.Success)?.data ?: emptyList()
                 setupCarousels(favorites = result.data ?: emptyList(), rated = currentRatedSongs)
@@ -194,6 +201,7 @@ class ProfileFragment : Fragment() {
         }
 
         profileViewModel.ratedSongs.observe(viewLifecycleOwner) { result ->
+
             if (result is Result.Success) {
                 val currentFavoriteSongs = (profileViewModel.favoriteSongs.value as? Result.Success)?.data ?: emptyList()
                 setupCarousels(favorites = currentFavoriteSongs, rated = result.data ?: emptyList())
@@ -224,6 +232,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun animateFadeOutThenNavigate(view: View, destinationId: Int) {
+
         view.animate().alpha(0f).setDuration(300).withEndAction {
             findNavController().navigate(destinationId)
             view.alpha = 1f
@@ -239,7 +248,6 @@ class ProfileFragment : Fragment() {
             Triple(song.title, song.artists.joinToString(", "), song)
         }
 
-        // Now, update the existing adapters instead of recreating them
         favoritesAdapter.updateData(favoritesDataForCarousel)
         ratedAdapter.updateData(ratedDataForCarousel)
     }
@@ -253,4 +261,12 @@ class ProfileFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun navigateToAuthAndClearBackStack() {
+        val intent = Intent(requireActivity(), AuthActivity::class.java) // Replace AuthActivity with your actual authentication Activity
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        requireActivity().finish()
+    }
+
 }

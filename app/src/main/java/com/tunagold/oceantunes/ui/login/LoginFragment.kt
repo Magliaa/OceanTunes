@@ -1,5 +1,6 @@
 package com.tunagold.oceantunes.ui.login
 
+import android.content.Intent // Import for Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.tunagold.oceantunes.MainActivity // Import your MainActivity
 import com.tunagold.oceantunes.databinding.FragmentLoginBinding
 import com.tunagold.oceantunes.utils.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +48,7 @@ class LoginFragment : Fragment() {
         setupGoogleSignInButton()
 
         binding.registerText.setOnClickListener {
+
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
@@ -55,6 +58,14 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewModel()
+
+
+
+        if (loginViewModel.isUserLoggedIn()) {
+            navigateToMainAndClearBackStack()
+            return
+        }
+
     }
 
     private fun setupLoginButton() {
@@ -77,13 +88,15 @@ class LoginFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+
         loginViewModel.signInResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {
+
                 }
                 is Result.Success -> {
                     toastHelper.showShort("Accesso effettuato con successo")
-                    findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
+                    navigateToMainAndClearBackStack() // Call the new navigation method
                 }
                 is Result.Error -> {
                     Log.e("LoginFragment", "Accesso fallito: ${result.exception.message}")
@@ -92,13 +105,15 @@ class LoginFragment : Fragment() {
             }
         }
 
+
         loginViewModel.googleSignInResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {
+
                 }
                 is Result.Success -> {
                     toastHelper.showShort("Accesso effettuato con successo")
-                    findNavController().navigate(R.id.action_loginFragment_to_mainActivityDestination)
+                    navigateToMainAndClearBackStack() // Call the new navigation method
                 }
                 is Result.Error -> {
                     Log.e("LoginFragment", "Accesso fallito: ${result.exception.message}")
@@ -106,12 +121,23 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+
 
         loginViewModel.googleSignInIntentSenderRequest.observe(viewLifecycleOwner) { pendingIntent ->
             val intentSender = pendingIntent.intentSender
             val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
             googleSignInLauncher.launch(intentSenderRequest)
         }
+    }
+
+
+    private fun navigateToMainAndClearBackStack() {
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {

@@ -59,4 +59,8 @@
     <string name="release_date_format">Data di Rilascio: %s</string>
     <string name="credits_format">Crediti: %s</string>
     <string name="default_web_client_id">276791796214-o8hch64v2uk3a6qn3996ggpggfrdvvnk.apps.googleusercontent.com</string>
+    <string name="favorites_title">Preferite</string>
+    <string name="rated_songs_title">Canzoni valutate</string>
+    <string name="now_playing_title">In tendenza ora</string>
+    <string name="recommended_title">Le più votate</string>
 </resources>

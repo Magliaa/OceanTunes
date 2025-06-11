@@ -2,6 +2,7 @@ package com.tunagold.oceantunes.ui.login
 
 import android.app.PendingIntent
 import android.content.Intent
+import com.google.firebase.auth.FirebaseAuth
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +17,8 @@ import com.tunagold.oceantunes.utils.Result
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepository: IUserRepository,
-    private val googleAuthHelper: GoogleAuthHelper
+    private val googleAuthHelper: GoogleAuthHelper,
+    private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
     private val _signInResult = MutableLiveData<Result<String>>()
@@ -35,6 +37,10 @@ class LoginViewModel @Inject constructor(
                 _signInResult.value = result
             }
         }
+    }
+
+    fun isUserLoggedIn(): Boolean {
+        return firebaseAuth.currentUser != null
     }
 
     fun initiateGoogleSignIn() {

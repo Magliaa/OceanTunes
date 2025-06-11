@@ -1,12 +1,15 @@
 package com.tunagold.oceantunes.ui.register
 
+import android.content.Intent // Importa per Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.tunagold.oceantunes.MainActivity // Importa la tua MainActivity
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentRegisterBinding
 import com.tunagold.oceantunes.utils.ToastHelper
@@ -35,10 +38,18 @@ class RegisterFragment : Fragment() {
 
         toastHelper = ToastHelper(requireContext())
 
+
+        if (viewModel.isUserLoggedIn()) {
+            navigateToMainAndClearBackStack()
+            return
+        }
+
+
         setupRegisterButton()
         observeSignUpResult()
 
         binding.registerText.setOnClickListener {
+
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
     }
@@ -64,10 +75,11 @@ class RegisterFragment : Fragment() {
         viewModel.signUpResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {
+
                 }
                 is Result.Success -> {
                     toastHelper.showShort("Registrazione effettuata con successo")
-                    findNavController().navigate(R.id.action_registerFragment_to_mainActivityDestination)
+                    navigateToMainAndClearBackStack()
                 }
                 is Result.Error -> {
                     toastHelper.showShort("Registrazione fallita: ${result.exception.message}")
@@ -75,6 +87,17 @@ class RegisterFragment : Fragment() {
             }
         }
     }
+
+
+    private fun navigateToMainAndClearBackStack() {
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+
+        requireActivity().finish()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
