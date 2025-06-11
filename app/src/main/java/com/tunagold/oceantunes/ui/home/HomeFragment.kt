@@ -9,10 +9,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.tunagold.oceantunes.R
 import com.tunagold.oceantunes.databinding.FragmentHomeBinding
-import com.tunagold.oceantunes.model.Song // Ensure this is your Parcelable Song model
-import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter // Import the generic CarouselAdapter
+import com.tunagold.oceantunes.model.Song
+import com.tunagold.oceantunes.ui.components.carousel.CarouselAdapter
 import com.tunagold.oceantunes.utils.Result
-import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment // Import SongCardDialogFragment
+import com.tunagold.oceantunes.ui.songsgrid.SongCardDialogFragment
+// Import the generated Safe Args directions
+import com.tunagold.oceantunes.ui.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -56,13 +58,25 @@ class HomeFragment : Fragment() {
 
         observeViewModel()
 
+        // --- MODIFIED NAVIGATION CALLS ---
         binding.nowMoreButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_songsGridFragment)
+            val nowPlayingSongsList = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
+            val action = HomeFragmentDirections.actionHomeFragmentToSongsGridFragment(
+                songsListKey = nowPlayingSongsList.toTypedArray(), // Pass as array
+                titleKey = getString(R.string.now_playing_title) // Define a string resource for title
+            )
+            findNavController().navigate(action)
         }
 
         binding.recommendedMoreButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_songsGridFragment)
+            val recommendedSongsList = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
+            val action = HomeFragmentDirections.actionHomeFragmentToSongsGridFragment(
+                songsListKey = recommendedSongsList.toTypedArray(), // Pass as array
+                titleKey = getString(R.string.recommended_title) // Define a string resource for title
+            )
+            findNavController().navigate(action)
         }
+        // --- END MODIFIED NAVIGATION CALLS ---
 
         homeViewModel.fetchTopFavoriteSongs()
         homeViewModel.fetchTopRatedSongs()
@@ -70,50 +84,42 @@ class HomeFragment : Fragment() {
 
     private fun observeViewModel() {
         homeViewModel.topFavoriteSongs.observe(viewLifecycleOwner) { result ->
-            val rated = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
-            when (result) {
-                is Result.Loading -> { /* Keep existing content */ }
-                is Result.Success -> {
-                    setupCarousels(result.data ?: emptyList(), rated)
-                }
-                is Result.Error -> {
-                    setupCarousels(emptyList(), rated)
-                }
+            if (result is Result.Success) {
+                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(nowPlaying = result.data ?: emptyList(), recommended = currentRecommendedSongs)
+            } else if (result is Result.Error) {
+                // Handle error or show toast
+                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(nowPlaying = emptyList(), recommended = currentRecommendedSongs)
             }
         }
 
         homeViewModel.topRatedSongs.observe(viewLifecycleOwner) { result ->
-            val favorites = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
-            when (result) {
-                is Result.Loading -> { /* Keep existing content */ }
-                is Result.Success -> {
-                    setupCarousels(favorites, result.data ?: emptyList())
-                }
-                is Result.Error -> {
-                    setupCarousels(favorites, emptyList())
-                }
+            if (result is Result.Success) {
+                val currentNowPlayingSongs = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(nowPlaying = currentNowPlayingSongs, recommended = result.data ?: emptyList())
+            } else if (result is Result.Error) {
+                // Handle error or show toast
+                val currentNowPlayingSongs = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(nowPlaying = currentNowPlayingSongs, recommended = emptyList())
             }
         }
     }
 
-    private fun setupCarousels(favorites: List<Song>, rated: List<Song>) {
-        // Prepare data for the generic CarouselAdapter, passing the full Song object
-        val favoritesItems: List<Triple<String, String, Song>> = favorites.map {
-            Triple(it.title, it.artists.joinToString(", "), it) // Pass the entire Song object
+    private fun setupCarousels(nowPlaying: List<Song>, recommended: List<Song>) {
+        val nowPlayingDataForCarousel: List<Triple<String, String, Song>> = nowPlaying.map { song ->
+            Triple(song.title, song.artists.joinToString(", "), song)
         }
 
-        val ratedItems: List<Triple<String, String, Song>> = rated.map {
-            Triple(it.title, it.artists.joinToString(", "), it) // Pass the entire Song object
+        val recommendedDataForCarousel: List<Triple<String, String, Song>> = recommended.map { song ->
+            Triple(song.title, song.artists.joinToString(", "), song)
         }
 
-        // Update the data in the existing adapter instances
-        nowSongsAdapter.updateData(favoritesItems)
-        recommendedSongsAdapter.updateData(ratedItems)
+        nowSongsAdapter.updateData(nowPlayingDataForCarousel)
+        recommendedSongsAdapter.updateData(recommendedDataForCarousel)
     }
 
-    // Update showSongDialog to accept a Song object
     private fun showSongDialog(song: Song) {
-        // Use the factory method from SongCardDialogFragment
         val dialog = SongCardDialogFragment.newInstance(song)
         dialog.show(parentFragmentManager, "SongCardDialog")
     }
