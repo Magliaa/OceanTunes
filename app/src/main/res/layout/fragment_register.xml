@@ -194,6 +194,8 @@
             android:scaleX="1.2"
             android:scaleY="1.2"
             app:icon="@drawable/ic_google_logo"
+            app:iconTint="@color/purple5"
+            app:backgroundColor="@color/purple3"
             tools:ignore="HardcodedText" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
