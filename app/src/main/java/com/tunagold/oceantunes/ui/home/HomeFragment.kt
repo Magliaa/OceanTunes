@@ -85,23 +85,23 @@ class HomeFragment : Fragment() {
     private fun observeViewModel() {
         homeViewModel.topFavoriteSongs.observe(viewLifecycleOwner) { result ->
             if (result is Result.Success) {
-                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
-                setupCarousels(nowPlaying = result.data ?: emptyList(), recommended = currentRecommendedSongs)
-            } else if (result is Result.Error) {
-                // Handle error or show toast
-                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
-                setupCarousels(nowPlaying = emptyList(), recommended = currentRecommendedSongs)
-            }
-        }
-
-        homeViewModel.topRatedSongs.observe(viewLifecycleOwner) { result ->
-            if (result is Result.Success) {
                 val currentNowPlayingSongs = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
                 setupCarousels(nowPlaying = currentNowPlayingSongs, recommended = result.data ?: emptyList())
             } else if (result is Result.Error) {
                 // Handle error or show toast
                 val currentNowPlayingSongs = (homeViewModel.topFavoriteSongs.value as? Result.Success)?.data ?: emptyList()
                 setupCarousels(nowPlaying = currentNowPlayingSongs, recommended = emptyList())
+            }
+        }
+
+        homeViewModel.topRatedSongs.observe(viewLifecycleOwner) { result ->
+            if (result is Result.Success) {
+                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(nowPlaying = result.data ?: emptyList(), recommended = currentRecommendedSongs)
+            } else if (result is Result.Error) {
+                // Handle error or show toast
+                val currentRecommendedSongs = (homeViewModel.topRatedSongs.value as? Result.Success)?.data ?: emptyList()
+                setupCarousels(nowPlaying = emptyList(), recommended = currentRecommendedSongs)
             }
         }
     }
