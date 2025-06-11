@@ -7,7 +7,6 @@
     <application
         android:name=".OceanTunesApp"
         android:allowBackup="true"
-        android:windowSoftInputMode="adjustPan|stateHidden"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -36,7 +35,7 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:exported="false"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity">
+            android:windowSoftInputMode="adjustPan"  tools:ignore="DiscouragedApi,LockedOrientationActivity">
         </activity>
     </application>
 </manifest>

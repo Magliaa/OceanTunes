@@ -30,5 +30,10 @@
     <style name="SongCardDialogAnimation">
     </style>
 
+    <style name="ShapeAppearance.App.RoundedImage" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item> <!-- Puoi regolare questo valore (es. 8dp, 12dp, 24dp) per cambiare l'arrotondamento -->
+    </style>
+
 
 </resources>
